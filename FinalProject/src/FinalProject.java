@@ -61,6 +61,7 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 			healEnemies(enemies);
 			moveHealthBars(enemies);
 			moveRangeIndicator(rangeIndicator, turrets, sideMenu);
+			showShopInfo(sideMenu);
 			changeScoreLabel(player, score);
 			colorShop(sideMenu, player);
 			checkClick(sideMenu, player);
@@ -560,13 +561,12 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 		GRect cancel;
 		GRect fasterButton;
 		GLabel fasterButtonLabel;
+		GPolygon shopInfoBox;
 		
 		ArrayList<Turret> turretShop = new ArrayList<Turret>();
 		ArrayList<GLabel> turretNameLabels = new ArrayList<GLabel>();
+		ArrayList<GLabel> shopInfoLabels = new ArrayList<GLabel>();		
 		ArrayList<GLabel> turretPriceLabels = new ArrayList<GLabel>();
-		ArrayList<GLabel> turretDMGLabels = new ArrayList<GLabel>();
-		ArrayList<GLabel> turretRangeLabels = new ArrayList<GLabel>();
-		ArrayList<GLabel> turretTargetLabels = new ArrayList<GLabel>();
 
 		//constructor
 		private SideMenu() {
@@ -577,12 +577,13 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 			this.shopLabel.setColor(Color.BLACK);
 			createCancel();
 			addTurret("destroyer", getWidth()-SIDE_MENU_WIDTH/2, 75.0);
-			addTurret("knocker", getWidth()-SIDE_MENU_WIDTH/2, 215.0);
-			addTurret("sniper", getWidth()-SIDE_MENU_WIDTH/2, 355.0);
-			addTurret("dome", getWidth()-SIDE_MENU_WIDTH/2, 500.0);
+			addTurret("knocker", getWidth()-SIDE_MENU_WIDTH/2, 175.0);
+			addTurret("sniper", getWidth()-SIDE_MENU_WIDTH/2, 275.0);
+			addTurret("dome", getWidth()-SIDE_MENU_WIDTH/2, 375.0);
 			addButton();
 			addNextRoundLabel();
 			addAuthor();
+			addInfoBox();
 		}
 
 		/**
@@ -607,25 +608,10 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 			labelName.move(-labelName.getWidth()/2, 0);
 			this.turretNameLabels.add(labelName);
 			GLabel label = createLabel(x, y+50, "15");
-			label.setLabel("Price: " + turret.cost + "$");
+			label.setLabel(turret.cost + "$");
 			label.setColor(Color.BLACK);
 			label.move(-label.getWidth()/2, 0);
 			this.turretPriceLabels.add(label);
-			GLabel labelDmg = createLabel(x, y+65, "15");
-			labelDmg.setLabel("DMG: " + turret.dmg);
-			labelDmg.setColor(Color.BLACK);
-			labelDmg.move(-labelDmg.getWidth()/2, 0);
-			this.turretDMGLabels.add(labelDmg);
-			GLabel labelRange = createLabel(x, y+80, "15");
-			labelRange.setLabel("Range: " + turret.range);
-			labelRange.setColor(Color.BLACK);
-			labelRange.move(-labelRange.getWidth()/2, 0);
-			this.turretRangeLabels.add(labelRange);
-			GLabel labelTarget = createLabel(x, y+95, "15");
-			labelTarget.setLabel("Target: " + turret.targetType);
-			labelTarget.setColor(Color.BLACK);
-			labelTarget.move(-labelTarget.getWidth()/2, 0);
-			this.turretTargetLabels.add(labelTarget);
 		}
 
 		/**
@@ -677,6 +663,31 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 			this.author.setLabel("© 2018 dede64");
 			this.author.move(-this.author.getWidth()/2, 0);
 			this.author.setColor(Color.BLACK);
+		}
+		
+		/**
+		 * method to create a shop info box and labels on it
+		 */
+		private void addInfoBox() {
+			this.shopInfoBox = new GPolygon();
+			for(int i = 0; i<INFO_BOX_X.length; i++){this.shopInfoBox.addVertex(INFO_BOX_X[i], INFO_BOX_Y[i]);}
+			this.shopInfoBox.setFilled(true);
+			this.shopInfoBox.setColor(Color.CYAN);
+			add(this.shopInfoBox, getWidth()-SIDE_MENU_WIDTH + 50, getHeight()-60);
+			this.shopInfoBox.setVisible(false);
+			
+			GLabel info1 = createLabel(getWidth()-SIDE_MENU_WIDTH - 105, -50, "16");
+			info1.setColor(Color.BLACK);
+			this.shopInfoLabels.add(info1);
+			GLabel info2 = createLabel(getWidth()-SIDE_MENU_WIDTH - 105, -50, "16");
+			info2.setColor(Color.BLACK);
+			this.shopInfoLabels.add(info2);
+			GLabel info3 = createLabel(getWidth()-SIDE_MENU_WIDTH - 105, -50, "16");
+			info3.setColor(Color.BLACK);
+			this.shopInfoLabels.add(info3);
+			for(int i = 0; i < this.shopInfoLabels.size(); i++) {
+				this.shopInfoLabels.get(i).setVisible(false);
+			}
 		}
 	}
 
@@ -908,13 +919,47 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 			ri.setSize(0, 0);
 		}
 	}
+	
+	/**
+	 * method to show shop info label when hover on item in shop
+	 */
+	private void showShopInfo(SideMenu menu) {
+		if (onClick == null) {
+			for(int i = 0; i<menu.turretShop.size(); i++) {
+				Turret turret = menu.turretShop.get(i);
+				if (turret.base.contains(mouseX, mouseY)||turret.canon.contains(mouseX, mouseY)) {
+					// Move GPolygon
+					menu.shopInfoBox.setVisible(true);
+					menu.shopInfoBox.setLocation(menu.shopInfoBox.getX(), turret.base.getY());
+					// Change labels
+					GLabel label1 = menu.shopInfoLabels.get(0);
+					label1.setLabel(turret.cost + "$  " + (int)turret.dmg + "DMG");
+					label1.setLocation(label1.getX(), turret.base.getY() -20);
+					GLabel label2 = menu.shopInfoLabels.get(1);
+					label2.setLabel(TICK / 1000.0 * turret.reloadTime + "s  " + (int)turret.range + "m " + (int)turret.bulletSpeed + "m/s");
+					label2.setLocation(label2.getX(), turret.base.getY() +10);
+					GLabel label3 = menu.shopInfoLabels.get(2);
+					label3.setLabel("anti " + turret.targetType);
+					label3.setLocation(label3.getX(), turret.base.getY() +40);
+					for(int k = 0; k < menu.shopInfoLabels.size(); k++) {
+						menu.shopInfoLabels.get(k).setVisible(true);
+					}
+					return;
+				}
+			}
+		}
+		menu.shopInfoBox.setVisible(false);
+		for(int i = 0; i < menu.shopInfoLabels.size(); i++) {
+			menu.shopInfoLabels.get(i).setVisible(false);
+		}
+	}
 
 	/**
 	 * method to create label on given coordinates
 	 */
 	private GLabel createLabel(double x, double y, String size) {
 		GLabel label = new GLabel("");
-		String font = "Papyrus-" + size;
+		String font = "Franklin Gothic Medium-" + size;
 		label.setFont(font);
 		label.setColor(Color.GRAY);
 		add(label, x, y);
@@ -1008,7 +1053,7 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 	private boolean placeAvailable(double x, double y, ArrayList<Turret> turrets){
 		boolean available = true;
 		for(int i = 0; i<turrets.size(); i++) {
-			if (turrets.get(i).base.contains(x, y)){
+			if (turrets.get(i).base.contains(x-x%40+20, y-y%40+20)){
 				available = false;
 			}
 		}

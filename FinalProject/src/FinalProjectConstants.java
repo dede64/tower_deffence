@@ -130,6 +130,10 @@ public interface FinalProjectConstants {
 	 * Constants of side menu
 	 */	
 	public static final int SIDE_MENU_WIDTH = 160;
+	public static final int INFO_BOX_WIDTH = 240;
+	public static final int INFO_BOX_HEIGHT = 100;
+	public static final double[] INFO_BOX_Y = {0, 10, 50, 50, -50, -50, -10, 0};
+	public static final double[] INFO_BOX_X = {0, -20, -20, -160, -160, -20, -20, 0};
 	
 	/**
 	 * Constants of waves
