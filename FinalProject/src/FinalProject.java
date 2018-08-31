@@ -117,6 +117,12 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 			else if(this.type.equals("dome")) {
 				makeDome();
 			}
+			else if(this.type.equals("rocketer")) {
+				makeRocketer();
+			}
+			else if(this.type.equals("bonus")) {
+				makeBonus();
+			}
 		}
 
 		/**
@@ -199,6 +205,48 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 			this.xCanonCoordinates = DESTROYER_CANON_X;
 			this.yCanonCoordinates = DESTROYER_CANON_Y;
 			this.base = createBase(new Color(60, 60, 150), this.xBaseCoordinates, this.yBaseCoordinates);
+			this.canon = createCanon(Color.BLACK, this.xCanonCoordinates, this.yCanonCoordinates);
+			this.demage_radius = DEMAGE_RADIUS;
+			this.currentLoad = this.reloadTime;
+		}
+		
+		/**
+		 * create rocket launcher
+		 */
+		private void makeRocketer() {
+			this.type = "rocketer";
+			this.targetType = ROCKET_TARGET;
+			this.range = ROCKET_RANGE;
+			this.dmg = ROCKET_DMG;
+			this.reloadTime = ROCKET_RELOAD;
+			this.bulletSpeed = ROCKET_BULLET_SPEED;
+			this.cost = ROCKET_COST;
+			this.xBaseCoordinates = ROCKET_BASE_X;
+			this.yBaseCoordinates = ROCKET_BASE_Y;
+			this.xCanonCoordinates = ROCKET_CANON_X;
+			this.yCanonCoordinates = ROCKET_CANON_Y;
+			this.base = createBase(Color.DARK_GRAY, this.xBaseCoordinates, this.yBaseCoordinates);
+			this.canon = createCanon(Color.BLACK, this.xCanonCoordinates, this.yCanonCoordinates);
+			this.demage_radius = DEMAGE_RADIUS;
+			this.currentLoad = this.reloadTime;
+		}
+		
+		/**
+		 * create rocket bonus
+		 */
+		private void makeBonus() {
+			this.type = "bonus";
+			this.targetType = BONUS_TARGET;
+			this.range = BONUS_RANGE;
+			this.dmg = BONUS_DMG;
+			this.reloadTime = BONUS_RELOAD;
+			this.bulletSpeed = BONUS_BULLET_SPEED;
+			this.cost = BONUS_COST;
+			this.xBaseCoordinates = BONUS_BASE_X;
+			this.yBaseCoordinates = BONUS_BASE_Y;
+			this.xCanonCoordinates = BONUS_CANON_X;
+			this.yCanonCoordinates = BONUS_CANON_Y;
+			this.base = createBase(Color.DARK_GRAY, this.xBaseCoordinates, this.yBaseCoordinates);
 			this.canon = createCanon(Color.BLACK, this.xCanonCoordinates, this.yCanonCoordinates);
 			this.demage_radius = DEMAGE_RADIUS;
 			this.currentLoad = this.reloadTime;
@@ -580,6 +628,7 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 			addTurret("knocker", getWidth()-SIDE_MENU_WIDTH/2, 175.0);
 			addTurret("sniper", getWidth()-SIDE_MENU_WIDTH/2, 275.0);
 			addTurret("dome", getWidth()-SIDE_MENU_WIDTH/2, 375.0);
+			addTurret("rocketer", getWidth()-SIDE_MENU_WIDTH/2, 475.0);
 			addButton();
 			addNextRoundLabel();
 			addAuthor();
@@ -724,35 +773,60 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 
 	/**
 	 * method to rotate canons to aim at the nearest enemies
+	 * when turret is rocketer it aims at enemy with most health
+	 * also it choose target for canon
 	 */
 	private void rotateCanons(ArrayList<Turret> turrets, ArrayList<Enemy> enemies) {
 		for(int t = 0; t< turrets.size(); t++) {
 			Turret turret = turrets.get(t);
 			double min = 100000;
-			for (int e = 0; e < enemies.size(); e++) {
-				Enemy enemy = enemies.get(e);
-				double x_diff = enemy.x - turret.x;
-				double y_diff = enemy.y - turret.y;
-				double distance = Math.sqrt(Math.pow(x_diff, 2) + Math.pow(y_diff, 2));
-				if(distance<min && turret.targetType==enemy.movement) {
-					min = distance;
-					turret.target = enemy;					
+			if(turret.type != "rocketer") {// TODO make it shorter and less complex ;)				
+				for (int e = 0; e < enemies.size(); e++) {
+					Enemy enemy = enemies.get(e);
+					double x_diff = enemy.x - turret.x;
+					double y_diff = enemy.y - turret.y;
+					double distance = Math.sqrt(Math.pow(x_diff, 2) + Math.pow(y_diff, 2));
+					if(distance<min && turret.targetType==enemy.movement) {
+						min = distance;
+						turret.target = enemy;					
+					}
+					else if(distance<min && turret.targetType=="air/ground") {
+						min = distance;
+						turret.target = enemy;					
+					}
 				}
-				else if(distance<min && turret.targetType=="air/ground") {
-					min = distance;
-					turret.target = enemy;					
+				if(min<=turret.range){
+					double angle = getAngle(turret.x, turret.y, turret.target.x, turret.target.y);
+					turret.canon.rotate(-turret.last_rotation);
+					turret.last_rotation = angle;
+					turret.canon.rotate(angle);
 				}
+				else {
+					turret.target = null;
+					turret.canon.rotate(-turret.last_rotation);
+					turret.last_rotation = 0;
+				}	
 			}
-			if(min<=turret.range){
-				double angle = getAngle(turret.x, turret.y, turret.target.x, turret.target.y);
-				turret.canon.rotate(-turret.last_rotation);
-				turret.last_rotation = angle;
-				turret.canon.rotate(angle);
-			}
-			else {
+			else if(turret.type == "rocketer") {
+				double health = 0;
 				turret.target = null;
-				turret.canon.rotate(-turret.last_rotation);
-				turret.last_rotation = 0;
+				for (int e = 0; e < enemies.size(); e++) {
+					Enemy enemy = enemies.get(e);
+					if(enemy.health>health && enemy.movement == ROCKET_TARGET) {
+						turret.target = enemy;
+						health = enemy.health;
+					}					
+				}
+				if (turret.target == null) {
+					turret.canon.rotate(-turret.last_rotation);
+					turret.last_rotation = 0;
+				}
+				else {
+					double angle = getAngle(turret.x, turret.y, turret.target.x, turret.target.y);
+					turret.canon.rotate(-turret.last_rotation);
+					turret.last_rotation = angle;
+					turret.canon.rotate(angle);
+				}
 			}
 		}
 	}
@@ -949,8 +1023,10 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 			}
 		}
 		menu.shopInfoBox.setVisible(false);
+		menu.shopInfoBox.sendToFront();
 		for(int i = 0; i < menu.shopInfoLabels.size(); i++) {
 			menu.shopInfoLabels.get(i).setVisible(false);
+			menu.shopInfoLabels.get(i).sendToFront();
 		}
 	}
 
@@ -1026,6 +1102,7 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 			player.money-=onClick.cost;
 			remove(menu.cancel);
 			onClick = null;
+			checkTurretCombination(turrets);
 		}
 		else {
 			mouseRelease = false;
@@ -1107,11 +1184,22 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 
 	/**
 	 * method to add enemies from a wave to the screen
+	 * when wave is bigger than 10, there is a random chance, that enemy will mutate. 
 	 */
 	private void addEnemies(ArrayList<Enemy> enemies, ArrayList<ArrayList<String>> waves, int counter, ArrayList<Double> pathX, ArrayList<Double> pathY, Player player) {
 		if(counter%WAVE_SPACING==0 && waves.size()>0 && player.started == true) {
 			ArrayList<String> wave = waves.get(0);
 			enemies.add(new Enemy(wave.get(0), pathX, pathY, player.wave_number));
+			double randomBoost = rg.nextDouble(0, WAVE_RANDOM_MUTATION);
+			Enemy enemy = enemies.get(enemies.size()-1);
+			if(randomBoost < 1 && player.wave_number > WAVE_RANDOM_MUTATION_FIRST_WAVE && enemy.movement == "ground") {
+				enemy.max_health = enemy.max_health * 10;
+				enemy.health = enemy.max_health;
+				enemy.healing *= 10;
+				enemy.speed = 1;
+				Color color = new Color(60, 188, 212);
+				enemy.vehicle.setColor(color);
+			}
 			wave.remove(0);
 			if(wave.size()<1) {
 				player.started = false;
@@ -1167,7 +1255,7 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 			menu.button.setVisible(false);
 			menu.nextWaveLabel.setVisible(false);
 		}
-		else if(enemies.size() == 0 && menu.button.isVisible() == false) {
+		else if(enemies.size() == 0 && menu.button.isVisible() == false && player.started == false) {
 			menu.button.setVisible(true);
 			menu.nextWaveLabel.setVisible(true);
 			player.tick = TICK;
@@ -1176,10 +1264,61 @@ public class FinalProject extends GraphicsProgram implements FinalProjectConstan
 			menu.fasterButton.setVisible(true);
 			menu.fasterButtonLabel.setVisible(true);
 		}
-		else if(enemies.size() == 0 && menu.fasterButton.isVisible() == true) {
+		else if(enemies.size() == 0 && menu.fasterButton.isVisible() == true && player.started == false) {
 			menu.fasterButton.setVisible(false);
 			menu.fasterButtonLabel.setVisible(false);
 		}
+	}
+	
+	/**
+	 * method to check if turrets are arranged in good layout to create bonus turret
+	 */
+	private void checkTurretCombination(ArrayList<Turret> turrets) {
+		for(int i = turrets.size()-1; i>=0; i--) {
+			Turret turret = turrets.get(i);
+			if(turret.type == "destroyer") {
+				double x = turret.base.getX();
+				double y = turret.base.getY();
+				Turret tTop = null;
+				Turret tCorner = null;
+				Turret tRight = null;
+				for(int k = 0; k < turrets.size(); k++) {
+					Turret checkTurret = turrets.get(k);
+					if(checkTurret.base.contains(x, y-40)) {
+						tTop = checkTurret;
+					}
+					if(checkTurret.base.contains(x+40, y-40)) {
+						tCorner = checkTurret;
+					}
+					if(checkTurret.base.contains(x+40, y)) {
+						tRight = checkTurret;
+					}
+				}
+				if(tTop != null && tCorner != null & tRight != null) {
+					if(tTop.type == "destroyer" && tCorner.type == "destroyer" && tRight.type == "destroyer") {
+						deleteTurret(turret);
+						deleteTurret(tTop);
+						deleteTurret(tCorner);
+						deleteTurret(tRight);
+						turrets.remove(turret);
+						turrets.remove(tTop);
+						turrets.remove(tCorner);
+						turrets.remove(tRight);
+						Turret bonus = new Turret("bonus", x + 20, y - 20);
+						turrets.add(bonus);
+						return;
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * method to delete turret shape from screen
+	 */
+	private void deleteTurret(Turret turret) {
+		remove(turret.base);
+		remove(turret.canon);
 	}
 }
 

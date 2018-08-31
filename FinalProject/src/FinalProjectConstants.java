@@ -58,12 +58,12 @@ public interface FinalProjectConstants {
 	public static final String KNOCKER_TARGET = "ground";
 	public static final double KNOCKER_RANGE = 125;
 	public static final double KNOCKER_DMG = 15;
-	public static final int KNOCKER_RELOAD = 10;
+	public static final int KNOCKER_RELOAD = 12;
 	public static final double KNOCKER_BULLET_SPEED = 8;
 	public static final int KNOCKER_COST = 115;
 	
 	/**
-	 * Constants of knocker dome
+	 * Constants of dome
 	 */	
 	public static final String DOME_TARGET = "air";
 	public static final double DOME_RANGE = 300;
@@ -71,6 +71,40 @@ public interface FinalProjectConstants {
 	public static final int DOME_RELOAD = 14;
 	public static final double DOME_BULLET_SPEED = 8;
 	public static final int DOME_COST = 100;
+	
+	/**
+	 * Constants of rocket launcher
+	 */
+	public static final String ROCKET_TARGET = "ground";
+	public static final double ROCKET_RANGE = 2000;
+	public static final double ROCKET_DMG = 2000;
+	public static final int ROCKET_RELOAD = 900;
+	public static final double ROCKET_BULLET_SPEED = 1.5;
+	public static final int ROCKET_COST = 1500;
+	public static final double[] ROCKET_BASE_X = {0, 0, -10, -20, -10, -20, -10, 0, 10, 20, 10, 20, 10, 0, 0};
+	public static final double[] ROCKET_BASE_Y = {0, -10, -20, -20, 0, 20, 20, 10, 20, 20, 0, -20, -20, -10, 0};
+	public static final double[] ROCKET_CANON_X = {0, -5, -5, -10, -10, 10, 10, 5, 5, 0};
+	public static final double[] ROCKET_CANON_Y = {-40, -40, -10, -10, 10, 10, -10, -10, -40, -40};
+	
+	/**
+	 * Constants of bonus
+	 */
+	public static final String BONUS_TARGET = "ground";
+	public static final double BONUS_RANGE = 350;
+	public static final double BONUS_DMG = 40;
+	public static final int BONUS_RELOAD = 30;
+	public static final double BONUS_BULLET_SPEED = 5;
+	public static final int BONUS_COST = 1500;
+	public static final double[] BONUS_BASE_X = {
+			0, 0, -20, -20, -30, -40, -30, -40, -40, -30, -40, -30, -20, -20,
+			20, 20, 30, 40, 30, 40, 40, 30, 40, 30, 20, 20, 0, 0
+	};
+	public static final double[] BONUS_BASE_Y = {
+			0, -40, -40, -30, -40, -30, -20, -20, 20, 20, 30, 40, 30, 40,
+			40, 30, 40, 30, 20, 20, -20, -20, -30, -40, -30, -40, -40, 0 
+	};
+	public static final double[] BONUS_CANON_X = {0, 0, -10, -5, -15, -15, 15, 15, 5, 10, 0, 0};
+	public static final double[] BONUS_CANON_Y = {0, -60, -60, -15, -15, 15, 15, -15, -15, -60, -60, 0};
 	
 	//---------------------------------------------ENEMIES---------------------------------------------------------
 	
@@ -140,6 +174,8 @@ public interface FinalProjectConstants {
 	 */
 	public static final int WAVE_SPACING = 150; //150
 	public static final double WAVE_HEALTH_CONSTANT = 0.03; //constant tells how much to increase enemy health each wave
+	public static final int WAVE_RANDOM_MUTATION = 30;
+	public static final int WAVE_RANDOM_MUTATION_FIRST_WAVE = 8;
 	public static final String[] FIRST_WAVE = {"puncher", "puncher", "puncher", "puncher", "puncher", "puncher"};
 	public static final String[] SECOND_WAVE = {"puncher", "puncher", "puncher_speeder", "puncher", "puncher", "puncher"};
 	public static final String[] THIRD_WAVE = {"puncher_speeder", "puncher_speeder", "puncher_speeder", "puncher", "puncher", "puncher_speeder"};
