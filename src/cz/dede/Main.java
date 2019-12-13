@@ -120,42 +120,36 @@ public class Main extends GraphicsProgram implements TDConstants {
      * also it choose target for canon
      */
     public void rotateCanons(ArrayList<Turret> turrets, ArrayList<Enemy> enemies) {
-        for(int t = 0; t< turrets.size(); t++) {
-            Turret turret = turrets.get(t);
-            double min = 100000;
-            if(turret.type != "rocketer") {// TODO make it shorter and less complex ;)
-                for (int e = 0; e < enemies.size(); e++) {
-                    Enemy enemy = enemies.get(e);
-                    double x_diff = enemy.x - turret.x;
-                    double y_diff = enemy.y - turret.y;
-                    double distance = Math.sqrt(Math.pow(x_diff, 2) + Math.pow(y_diff, 2));
-                    if(distance<min && turret.targetType==enemy.movement) {
-                        min = distance;
-                        turret.target = enemy;
-                    }
-                    else if(distance<min && turret.targetType=="air/ground") {
-                        min = distance;
-                        turret.target = enemy;
+        for(Turret turret : turrets) {
+            if(!turret.type.equals("rocketer")) {
+                boolean found = false;
+                for(Enemy enemy: enemies){
+                    if(turret.targetType.equals(enemy.movement) || turret.targetType.equals("air/ground")){
+                        double x_diff = enemy.x - turret.x;
+                        double y_diff = enemy.y - turret.y;
+                        double distance = Math.sqrt(Math.pow(x_diff, 2) + Math.pow(y_diff, 2));
+                        if(distance <= turret.range){
+                            found = true;
+                            turret.target = enemy;
+                            double angle = getAngle(turret.x, turret.y, turret.target.x, turret.target.y);
+                            turret.canon.rotate(-turret.last_rotation);
+                            turret.last_rotation = angle;
+                            turret.canon.rotate(angle);
+                            break;
+                        }
                     }
                 }
-                if(min<=turret.range){
-                    double angle = getAngle(turret.x, turret.y, turret.target.x, turret.target.y);
-                    turret.canon.rotate(-turret.last_rotation);
-                    turret.last_rotation = angle;
-                    turret.canon.rotate(angle);
-                }
-                else {
+                if(!found){
                     turret.target = null;
                     turret.canon.rotate(-turret.last_rotation);
                     turret.last_rotation = 0;
                 }
             }
-            else if(turret.type == "rocketer") {
+            else{
                 double health = 0;
                 turret.target = null;
-                for (int e = 0; e < enemies.size(); e++) {
-                    Enemy enemy = enemies.get(e);
-                    if(enemy.health>health && enemy.movement == ROCKET_TARGET) {
+                for (Enemy enemy : enemies) {
+                    if (enemy.health > health && enemy.movement == ROCKET_TARGET) {
                         turret.target = enemy;
                         health = enemy.health;
                     }
