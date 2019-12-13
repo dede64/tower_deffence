@@ -30,7 +30,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     }
 
     //audio file
-//	AudioClip ShootClip = MediaTools.loadAudioClip("res/turret.au");
+	AudioClip ShootClip = MediaTools.loadAudioClip("res/turret.au");
 
     public void run() {
         canvas = getGCanvas();
@@ -55,6 +55,7 @@ public class Main extends GraphicsProgram implements TDConstants {
 
         //MAIN LOOP
         while(true) { // TODO some methods can be called only when they are needed for example colorShop(), changeScoreLabel...
+//            System.out.println("Turrets: " + turrets.size() + " Enemies: " + enemies.size() + " Bullets: " + bullets.size());
             moveEnemies(enemies, player);
             moveBullets(bullets);
             rotateCanons(turrets, enemies);
@@ -214,7 +215,7 @@ public class Main extends GraphicsProgram implements TDConstants {
             else if(turret.target!=null){
                 bullets.add(new Bullet(turret.target, turret, turret.x, turret.y));
                 turret.currentLoad = 0;
-//				ShootClip.play();
+//				ShootClip.play(); // TODO just for fun, but its buggy
             }
         }
     }
