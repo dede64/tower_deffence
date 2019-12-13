@@ -11,19 +11,20 @@ import java.applet.AudioClip;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main extends GraphicsProgram implements TDConstants {
 
     //instance variables
-    public double mouseX;
-    public double mouseY;
-    public boolean mouseClick = false;
-    public boolean mouseRelease = false;
-    public Turret onClick = null;
+    private double mouseX;
+    private double mouseY;
+    private boolean mouseClick = false;
+    private boolean mouseRelease = false;
+    private Turret onClick = null;
     public static GCanvas canvas;
 
     /** A random number generator **/
-    public RandomGenerator rg = new RandomGenerator();
+    private RandomGenerator rg = new RandomGenerator();
 
     public static void main(String[] args) {
         new Main().start(args);
@@ -38,36 +39,35 @@ public class Main extends GraphicsProgram implements TDConstants {
         GImage background = new GImage("res/map.png", 0, 0);
         add(background);
         Player player = new Player();
-        ArrayList<Turret> turrets = new ArrayList<Turret>();
-        ArrayList<Enemy> enemies = new ArrayList<Enemy>();
-        ArrayList<Bullet> bullets = new ArrayList<Bullet>();
-        ArrayList<Double> pathX = new ArrayList<Double>();
-        ArrayList<Double> pathY = new ArrayList<Double>();
+        ArrayList<Turret> turrets = new ArrayList<>();
+        ArrayList<Enemy> enemies = new ArrayList<>();
+        ArrayList<Bullet> bullets = new ArrayList<>();
+        ArrayList<Double> pathX = new ArrayList<>();
+        ArrayList<Double> pathY = new ArrayList<>();
         createPath(pathX, pathY);
         GOval rangeIndicator = createIndicator();
         SideMenu sideMenu = new SideMenu();
         GLabel score = createLabel(5, 20, "20");
         addMouseListeners();
+        colorShop(sideMenu, player);
 
         ArrayList<ArrayList<String>> waves = new ArrayList<ArrayList<String>>();
         waves = setWaves(waves);
         int waveCounter = 0;
 
         //MAIN LOOP
-        while(true) { // TODO some methods can be called only when they are needed for example colorShop(), changeScoreLabel...
-//            System.out.println("Turrets: " + turrets.size() + " Enemies: " + enemies.size() + " Bullets: " + bullets.size());
+        while(true) {
             moveEnemies(enemies, player);
             moveBullets(bullets);
             rotateCanons(turrets, enemies);
             checkCollisions(bullets);
             shoot(turrets, bullets);
-            checkHealth(enemies, player);
+            checkHealth(enemies, player, sideMenu);
             healEnemies(enemies);
             moveHealthBars(enemies);
             moveRangeIndicator(rangeIndicator, turrets, sideMenu);
             showShopInfo(sideMenu);
             changeScoreLabel(player, score);
-            colorShop(sideMenu, player);
             checkClick(sideMenu, player);
             moveOnClick();
             placeTurret(turrets, player, sideMenu);
@@ -86,16 +86,17 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to move enemies
      */
-    public void moveEnemies(ArrayList<Enemy> enemies, Player player) {
-        for(int i = 0; i<enemies.size(); i++) {
-            enemies.get(i).move(enemies, i, player);
+    private void moveEnemies(ArrayList<Enemy> enemies, Player player) {
+        for(int i = enemies.size() -1; i >= 0; i--){
+            Enemy enemy = enemies.get(i);
+            enemy.move(enemies, player);
         }
     }
 
     /**
      * method to move bullets
      */
-    public void moveBullets(ArrayList<Bullet> bullets) {
+    private void moveBullets(ArrayList<Bullet> bullets) {
         for(int i = bullets.size()-1; i>=0; i--) {
             Bullet bullet = bullets.get(i);
             if(bullet.enemy==null) {
@@ -115,11 +116,11 @@ public class Main extends GraphicsProgram implements TDConstants {
     }
 
     /**
-     * method to rotate canons to aim at the nearest enemies
+     * method to rotate canons to aim at the first enemy in range
      * when turret is rocketer it aims at enemy with most health
      * also it choose target for canon
      */
-    public void rotateCanons(ArrayList<Turret> turrets, ArrayList<Enemy> enemies) {
+    private void rotateCanons(ArrayList<Turret> turrets, ArrayList<Enemy> enemies) {
         for(Turret turret : turrets) {
             if(!turret.type.equals("rocketer")) {
                 boolean found = false;
@@ -149,7 +150,7 @@ public class Main extends GraphicsProgram implements TDConstants {
                 double health = 0;
                 turret.target = null;
                 for (Enemy enemy : enemies) {
-                    if (enemy.health > health && enemy.movement == ROCKET_TARGET) {
+                    if (enemy.health > health && enemy.movement.equals(ROCKET_TARGET)) {
                         turret.target = enemy;
                         health = enemy.health;
                     }
@@ -182,7 +183,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to check collisions between bullets and enemies, if yes, remove bullet and remove some health
      */
-    public void checkCollisions(ArrayList<Bullet> bullets) {
+    private void checkCollisions(ArrayList<Bullet> bullets) {
         for(int b = bullets.size()-1; b>=0; b--) {
             Bullet bullet = bullets.get(b);
             double x_diff = bullet.x - bullet.enemy.x;
@@ -200,13 +201,11 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to shoot from turrets, when they are reloaded
      */
-    public void shoot(ArrayList<Turret> turrets, ArrayList<Bullet> bullets) {
-        for(int i = 0; i < turrets.size(); i++) {
-            Turret turret = turrets.get(i);
-            if(turret.currentLoad<turret.reloadTime) {
+    private void shoot(ArrayList<Turret> turrets, ArrayList<Bullet> bullets) {
+        for (Turret turret : turrets) {
+            if (turret.currentLoad < turret.reloadTime) {
                 turret.currentLoad += 1;
-            }
-            else if(turret.target!=null){
+            } else if (turret.target != null) {
                 bullets.add(new Bullet(turret.target, turret, turret.x, turret.y));
                 turret.currentLoad = 0;
 //				ShootClip.play(); // TODO just for fun, but its buggy
@@ -217,7 +216,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to check if enemies health isn't below zero -> death
      */
-    public void checkHealth(ArrayList<Enemy> enemies, Player player) {
+    private void checkHealth(ArrayList<Enemy> enemies, Player player, SideMenu sideMenu) {
         for(int e = enemies.size()-1; e>=0; e--) {
             Enemy enemy = enemies.get(e);
             if(enemy.health<=0) {
@@ -230,6 +229,7 @@ public class Main extends GraphicsProgram implements TDConstants {
                 player.money += enemy.award * player.moneyBonus;
                 player.killed_enemies += 1;
                 enemies.remove(e);
+                colorShop(sideMenu, player);
             }
         }
     }
@@ -237,10 +237,9 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to heal enemies with healing abilities
      */
-    public void healEnemies(ArrayList<Enemy> enemies) {
-        for(int e = enemies.size()-1; e>=0; e--) {
-            Enemy enemy = enemies.get(e);
-            if(enemy.health<enemy.max_health) {
+    private void healEnemies(ArrayList<Enemy> enemies) {
+        for(Enemy enemy: enemies){
+            if(enemy.healing > 0 && enemy.health < enemy.max_health){
                 enemy.health += enemy.healing;
             }
         }
@@ -249,9 +248,8 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to change health bars of enemies according to their health
      */
-    public void moveHealthBars(ArrayList<Enemy> enemies) {
-        for(int e = enemies.size()-1; e>=0; e--) {
-            Enemy enemy = enemies.get(e);
+    private void moveHealthBars(ArrayList<Enemy> enemies) {
+        for(Enemy enemy: enemies) {
             enemy.greenHealth.setSize(enemy.health/enemy.max_health*30, enemy.greenHealth.getHeight());
         }
     }
@@ -295,7 +293,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to initialize range indicator
      */
-    public GOval createIndicator() {
+    private GOval createIndicator() {
         GOval rangeIndicator = new GOval(0,0);
         add(rangeIndicator);
         return rangeIndicator;
@@ -304,20 +302,19 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to move range indicator if is turret under mouse also when mouse drag a shop turret
      */
-    public void moveRangeIndicator(GOval ri, ArrayList<Turret> turrets, SideMenu menu) {
+    private void moveRangeIndicator(GOval ri, ArrayList<Turret> turrets, SideMenu menu) {
         boolean successHover = false;
-        for(int i = 0; i<turrets.size(); i++) {
-            Turret turret = turrets.get(i);
-            if (turret.base.contains(mouseX, mouseY)||turret.canon.contains(mouseX, mouseY)) {
+        for (Turret turret : turrets) {
+            if (turret.base.contains(mouseX, mouseY) || turret.canon.contains(mouseX, mouseY)) {
                 successHover = true;
-                ri.setSize(turret.range*2, turret.range*2);
-                ri.setLocation(turret.x-turret.range, turret.y-turret.range);
+                ri.setSize(turret.range * 2, turret.range * 2);
+                ri.setLocation(turret.x - turret.range, turret.y - turret.range);
             }
         }
-        if (menu.cancel.contains(mouseX, mouseY)&&onClick!=null) {
+        if (menu.getCancel().contains(mouseX, mouseY)&&onClick!=null) {
             remove(onClick.base);
             remove(onClick.canon);
-            remove(menu.cancel);
+            remove(menu.getCancel());
             onClick = null;
             ri.setSize(0, 0);
         }
@@ -326,7 +323,7 @@ public class Main extends GraphicsProgram implements TDConstants {
             ri.setLocation(onClick.x-onClick.range, onClick.y-onClick.range);
             successHover = true;
         }
-        if (successHover==false) {
+        if (!successHover) {
             ri.setSize(0, 0);
         }
     }
@@ -334,43 +331,42 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to show shop info label when hover on item in shop
      */
-    public void showShopInfo(SideMenu menu) {
+    private void showShopInfo(SideMenu menu) {
         if (onClick == null) {
-            for(int i = 0; i<menu.turretShop.size(); i++) {
-                Turret turret = menu.turretShop.get(i);
+            for(Turret turret : menu.getTurretShop()) {
                 if (turret.base.contains(mouseX, mouseY)||turret.canon.contains(mouseX, mouseY)) {
                     // Move GPolygon
-                    menu.shopInfoBox.setVisible(true);
-                    menu.shopInfoBox.setLocation(menu.shopInfoBox.getX(), turret.base.getY());
+                    menu.getShopInfoBox().setVisible(true);
+                    menu.getShopInfoBox().setLocation(menu.getShopInfoBox().getX(), turret.base.getY());
                     // Change labels
-                    GLabel label1 = menu.shopInfoLabels.get(0);
+                    GLabel label1 = menu.getShopInfoLabels().get(0);
                     label1.setLabel(turret.cost + "$  " + (int)turret.dmg + "DMG");
                     label1.setLocation(label1.getX(), turret.base.getY() -20);
-                    GLabel label2 = menu.shopInfoLabels.get(1);
+                    GLabel label2 = menu.getShopInfoLabels().get(1);
                     label2.setLabel(TICK / 1000.0 * turret.reloadTime + "s  " + (int)turret.range + "m " + (int)turret.bulletSpeed + "m/s");
                     label2.setLocation(label2.getX(), turret.base.getY() +10);
-                    GLabel label3 = menu.shopInfoLabels.get(2);
+                    GLabel label3 = menu.getShopInfoLabels().get(2);
                     label3.setLabel("anti " + turret.targetType);
                     label3.setLocation(label3.getX(), turret.base.getY() +40);
-                    for(int k = 0; k < menu.shopInfoLabels.size(); k++) {
-                        menu.shopInfoLabels.get(k).setVisible(true);
+                    for(GLabel label: menu.getShopInfoLabels()) {
+                        label.setVisible(true);
                     }
                     return;
                 }
             }
         }
-        menu.shopInfoBox.setVisible(false);
-        menu.shopInfoBox.sendToFront();
-        for(int i = 0; i < menu.shopInfoLabels.size(); i++) {
-            menu.shopInfoLabels.get(i).setVisible(false);
-            menu.shopInfoLabels.get(i).sendToFront();
+        menu.getShopInfoBox().setVisible(false);
+        menu.getShopInfoBox().sendToFront();
+        for(GLabel label: menu.getShopInfoLabels()) {
+            label.setVisible(false);
+            label.sendToFront();
         }
     }
 
     /**
      * method to create label on given coordinates
      */
-    public GLabel createLabel(double x, double y, String size) {
+    private GLabel createLabel(double x, double y, String size) {
         GLabel label = new GLabel("");
         String font = "Franklin Gothic Medium-" + size;
         label.setFont(font);
@@ -382,7 +378,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to change label with player score and lives
      */
-    public void changeScoreLabel(Player player, GLabel label) {
+    private void changeScoreLabel(Player player, GLabel label) {
         label.setLabel("Money: " + player.money + "$   Health: " + player.lives + "   Wave: " + (player.wave_number +1) + "   Score: " + player.killed_enemies);
     }
 
@@ -390,21 +386,21 @@ public class Main extends GraphicsProgram implements TDConstants {
      * method to grab item from shop, when clicked on it
      * method to check start button, to start new vawe, if the last is killed
      */
-    public void checkClick(SideMenu menu, Player player) {
-        if(player.started==false && menu.button.contains(mouseX, mouseY) && mouseClick == true && menu.button.isVisible() == true) {
+    private void checkClick(SideMenu menu, Player player) {
+        if(!player.started && menu.getButton().contains(mouseX, mouseY) && mouseClick && menu.getButton().isVisible()) {
             player.started=true;
             mouseClick = false;
         }
-        else if(menu.fasterButton.contains(mouseX, mouseY) && mouseClick == true && menu.fasterButton.isVisible() == true) {
+        else if(menu.getFasterButton().contains(mouseX, mouseY) && mouseClick && menu.getFasterButton().isVisible()) {
             player.tick = 2;
             mouseClick = false;
         }
-        else if(mouseClick == true && onClick == null) {
-            for(int i = 0; i< menu.turretShop.size(); i++) {
-                if(menu.turretShop.get(i).base.contains(mouseX, mouseY)||menu.turretShop.get(i).canon.contains(mouseX, mouseY)) {
-                    if(player.money>=menu.turretShop.get(i).cost) {
-                        onClick = new Turret(menu.turretShop.get(i).type, mouseX, mouseY);
-                        add(menu.cancel);
+        else if(mouseClick && onClick == null) {
+            for(int i = 0; i< menu.getTurretShop().size(); i++) {
+                if(menu.getTurretShop().get(i).base.contains(mouseX, mouseY)||menu.getTurretShop().get(i).canon.contains(mouseX, mouseY)) {
+                    if(player.money>=menu.getTurretShop().get(i).cost) {
+                        onClick = new Turret(menu.getTurretShop().get(i).type, mouseX, mouseY);
+                        add(menu.getCancel());
                     }
                 }
             }
@@ -418,7 +414,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to move shop item which is currently chosen on the field
      */
-    public void moveOnClick() {
+    private void moveOnClick() {
         if(onClick!=null) {
             onClick.setLocation(mouseX, mouseY);
         }
@@ -427,19 +423,18 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to release turret on the play field
      */
-    public void placeTurret(ArrayList<Turret> turrets, Player player, SideMenu menu) {
-        if(onClick != null && mouseRelease == true && placeAvailable(mouseX, mouseY, turrets)==true) {
+    private void placeTurret(ArrayList<Turret> turrets, Player player, SideMenu menu) {
+        if(onClick != null && mouseRelease && placeAvailable(mouseX, mouseY, turrets)) {
             turrets.add(new Turret(onClick.type, mouseX-mouseX%40+20, mouseY-mouseY%40+20));
-            for(int i = 0; i<turrets.size(); i++) {
-                turrets.get(i).canon.sendToFront();
-            }
+            for (Turret turret : turrets) turret.canon.sendToFront();
             mouseRelease = false;
             remove(onClick.base);
             remove(onClick.canon);
             player.money-=onClick.cost;
-            remove(menu.cancel);
+            remove(menu.getCancel());
             onClick = null;
             checkTurretCombination(turrets, player);
+            colorShop(menu, player);
         }
         else {
             mouseRelease = false;
@@ -449,14 +444,14 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to color shop items by their availability
      */
-    public void colorShop(SideMenu menu, Player player) {
-        for(int i = 0; i<menu.turretShop.size(); i++) {
-            Turret turret = menu.turretShop.get(i);
+    private void colorShop(SideMenu menu, Player player) {
+        for(int i = 0; i < menu.getTurretShop().size(); i++) {
+            Turret turret = menu.getTurretShop().get(i);
             if(turret.cost>player.money) {
-                menu.turretNameLabels.get(i).setColor(Color.RED);
+                menu.getTurretNameLabels().get(i).setColor(Color.RED);
             }
             else {
-                menu.turretNameLabels.get(i).setColor(Color.GREEN);
+                menu.getTurretNameLabels().get(i).setColor(Color.GREEN);
             }
         }
     }
@@ -464,14 +459,14 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method checks if the place on the map is available, checks other turrets and color under him
      */
-    public boolean placeAvailable(double x, double y, ArrayList<Turret> turrets){
+    private boolean placeAvailable(double x, double y, ArrayList<Turret> turrets){
         boolean available = true;
-        for(int i = 0; i<turrets.size(); i++) {
-            if (turrets.get(i).base.contains(x-x%40+20, y-y%40+20)){
+        for (Turret turret : turrets) {
+            if (turret.base.contains(x - x % 40 + 20, y - y % 40 + 20)) {
                 available = false;
             }
         }
-        if(available == true&&x<1240) {
+        if(available && x<1240) {
             GImage background = new GImage("res/map.png", 0, 0);
             int[][] pixels = background.getPixelArray();
             if(pixels[(int)y][(int)x]!=-7864299) {
@@ -487,7 +482,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to create array list of points of enemy path
      */
-    public void createPath(ArrayList<Double> pathX, ArrayList<Double> pathY) {
+    private void createPath(ArrayList<Double> pathX, ArrayList<Double> pathY) {
         double[] x = {950, 950, 355, 355, 950, 950};
         double[] y = {800, 540, 540, 220, 220, -20};
         for(int i = 0; i< x.length; i++) {
@@ -500,14 +495,13 @@ public class Main extends GraphicsProgram implements TDConstants {
      * method to calculate the distance of two points(vectors diagonal)
      */
     public static double countDistance(double x, double y) {
-        double diagonal = Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2));
-        return diagonal;
+        return Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2));
     }
 
     /**
      * method to return array list full of array lists of enemy waves.
      */
-    public ArrayList<ArrayList<String>> setWaves(ArrayList<ArrayList<String>> waves){
+    private ArrayList<ArrayList<String>> setWaves(ArrayList<ArrayList<String>> waves){
         waves.add(getWave(FIRST_WAVE));
         waves.add(getWave(SECOND_WAVE));
         waves.add(getWave(THIRD_WAVE));
@@ -523,13 +517,13 @@ public class Main extends GraphicsProgram implements TDConstants {
      * method to add enemies from a wave to the screen
      * when wave is bigger than 10, there is a random chance, that enemy will mutate.
      */
-    public void addEnemies(ArrayList<Enemy> enemies, ArrayList<ArrayList<String>> waves, int counter, ArrayList<Double> pathX, ArrayList<Double> pathY, Player player) {
-        if(counter%WAVE_SPACING==0 && waves.size()>0 && player.started == true) {
+    private void addEnemies(ArrayList<Enemy> enemies, ArrayList<ArrayList<String>> waves, int counter, ArrayList<Double> pathX, ArrayList<Double> pathY, Player player) {
+        if(counter%WAVE_SPACING==0 && waves.size()>0 && player.started) {
             ArrayList<String> wave = waves.get(0);
             enemies.add(new Enemy(wave.get(0), pathX, pathY, player.wave_number));
             double randomBoost = rg.nextDouble(0, WAVE_RANDOM_MUTATION);
             Enemy enemy = enemies.get(enemies.size()-1);
-            if(randomBoost < 1 && player.wave_number > WAVE_RANDOM_MUTATION_FIRST_WAVE && enemy.movement == "ground") {
+            if(randomBoost < 1 && player.wave_number > WAVE_RANDOM_MUTATION_FIRST_WAVE && enemy.movement.equals("ground")) {
                 enemy.max_health = enemy.max_health * 10;
                 enemy.health = enemy.max_health;
                 enemy.healing *= 10;
@@ -549,11 +543,11 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * Checks if player lives aren't below zero, if they are -> game over
      */
-    public void checkPlayerLives(Player player){
-        if(player.lives<=0 && player.gameOverRendered==false) {
+    private void checkPlayerLives(Player player){
+        if(player.lives<=0 && !player.gameOverRendered) {
             GLabel gameOver = new GLabel("!GAME OVER!");
             gameOver.setFont("Impact-40");
-            gameOver.setLocation((getWidth()-SIDE_MENU_WIDTH)/2-gameOver.getWidth()/2, getHeight()/2-gameOver.getHeight()/2);
+            gameOver.setLocation((getWidth()-SIDE_MENU_WIDTH)/2.0-gameOver.getWidth()/2, getHeight()/2.0-gameOver.getHeight()/2);
             add(gameOver);
             player.gameOverRendered=true;
 //			pause(1000000000);
@@ -563,19 +557,15 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to convert list to array list, here used to convert list of wave enemies
      */
-    public ArrayList<String> getWave(String[] wave_array){
-        ArrayList<String> wave = new ArrayList<>();
-        for(int i = 0; i<wave_array.length; i++) {
-            wave.add(wave_array[i]);
-        }
-        return wave;
+    private ArrayList<String> getWave(String[] wave_array){
+        return new ArrayList<>(Arrays.asList(wave_array));
     }
 
     /**
      * method to generate random wave
      */
-    public ArrayList<String> getRandomWave(){
-        ArrayList<String> wave = new ArrayList<String>();
+    private ArrayList<String> getRandomWave(){
+        ArrayList<String> wave = new ArrayList<>();
         String[] enemyChoice = {"puncher", "puncher_healer", "puncher_speeder", "flyer", "briger"};
         for(int i = 0; i<10; i++) {
             int k = rg.nextInt(0, enemyChoice.length-1);
@@ -587,33 +577,33 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to hide start wave button if wave has been already started
      */
-    public void hideWaveButton(SideMenu menu, ArrayList<Enemy> enemies, Player player) {
-        if(enemies.size() > 0 && menu.button.isVisible()) {
-            menu.button.setVisible(false);
-            menu.nextWaveLabel.setVisible(false);
+    private void hideWaveButton(SideMenu menu, ArrayList<Enemy> enemies, Player player) {
+        if(enemies.size() > 0 && menu.getButton().isVisible()) {
+            menu.getButton().setVisible(false);
+            menu.getNextWaveLabel().setVisible(false);
         }
-        else if(enemies.size() == 0 && !menu.button.isVisible() && !player.started) {
-            menu.button.setVisible(true);
-            menu.nextWaveLabel.setVisible(true);
+        else if(enemies.size() == 0 && !menu.getButton().isVisible() && !player.started) {
+            menu.getButton().setVisible(true);
+            menu.getNextWaveLabel().setVisible(true);
             player.tick = TICK;
         }
-        if(enemies.size() > 0 && !menu.fasterButton.isVisible()) {
-            menu.fasterButton.setVisible(true);
-            menu.fasterButtonLabel.setVisible(true);
+        if(enemies.size() > 0 && !menu.getFasterButton().isVisible()) {
+            menu.getFasterButton().setVisible(true);
+            menu.getFasterButtonLabel().setVisible(true);
         }
-        else if(enemies.size() == 0 && menu.fasterButton.isVisible() && !player.started) {
-            menu.fasterButton.setVisible(false);
-            menu.fasterButtonLabel.setVisible(false);
+        else if(enemies.size() == 0 && menu.getFasterButton().isVisible() && !player.started) {
+            menu.getFasterButton().setVisible(false);
+            menu.getFasterButtonLabel().setVisible(false);
         }
     }
 
     /**
      * method to check if turrets are arranged in good layout to create bonus turret
      */
-    public void checkTurretCombination(ArrayList<Turret> turrets, Player player) {
+    private void checkTurretCombination(ArrayList<Turret> turrets, Player player) {
         for(int i = turrets.size()-1; i>=0; i--) {
             Turret turret = turrets.get(i);
-            if(turret.type == "destroyer") {
+            if(turret.type.equals("destroyer")) {
                 double x = turret.base.getX();
                 double y = turret.base.getY();
                 Turret tTop = null;
@@ -642,8 +632,8 @@ public class Main extends GraphicsProgram implements TDConstants {
                         turrets.remove(tRight);
                         Turret bonus = new Turret("bonus", x + 20, y - 20);
                         turrets.add(bonus);
-                        for(int k = 0; k<turrets.size(); k++) {
-                            turrets.get(k).canon.sendToFront();
+                        for (Turret turret1 : turrets) {
+                            turret1.canon.sendToFront();
                         }
                         player.moneyBonus += BONUS_MONEY;
                         return;
@@ -656,7 +646,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to delete turret shape from screen
      */
-    public void deleteTurret(Turret turret) {
+    private void deleteTurret(Turret turret) {
         remove(turret.base);
         remove(turret.canon);
     }

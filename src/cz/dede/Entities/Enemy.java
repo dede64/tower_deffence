@@ -168,7 +168,7 @@ public class Enemy implements TDConstants {
     /**
      * method to move the enemy to the next point of path, if it is on the end of path it destroys object and substract a life
      */
-    public void move(ArrayList<Enemy> enemies, int index, Player player) {
+    public void move(ArrayList<Enemy> enemies, Player player) {
         double goalX = this.pathX.get(0);
         double goalY = this.pathY.get(0);
         double distanceX = goalX-this.x;
@@ -176,7 +176,13 @@ public class Enemy implements TDConstants {
         double distance = Main.countDistance(distanceX, distanceY);
         if(distance<5) {
             if(this.pathX.size()==1) {
-                removeIndex(enemies, index);
+                GPolygon shape = this.vehicle;
+                GRect greenBar = this.greenHealth;
+                GRect redBar = this.redHealth;
+                canvas.remove(shape);
+                canvas.remove(greenBar);
+                canvas.remove(redBar);
+                enemies.remove(this);
                 player.lives-=1;
             }
             else {

@@ -3,7 +3,6 @@ package cz.dede.Entities;
 import acm.graphics.GLabel;
 import acm.graphics.GPolygon;
 import acm.graphics.GRect;
-import cz.dede.Main;
 import cz.dede.resources.TDConstants;
 
 import java.awt.*;
@@ -15,34 +14,34 @@ import static cz.dede.Main.canvas;
  * Class of the side menu
  */
 public class SideMenu implements TDConstants {
-    public GRect background;
-    public GRect button;
-    public GLabel nextWaveLabel;
-    public GLabel shopLabel;
-    public GLabel author;
-    public GRect cancel;
-    public GRect fasterButton;
-    public GLabel fasterButtonLabel;
-    public GPolygon shopInfoBox;
+    private GRect background;
+    private GRect button;
+    private GLabel nextWaveLabel;
+    private GLabel shopLabel;
+    private GLabel author;
+    private GRect cancel;
+    private GRect fasterButton;
+    private GLabel fasterButtonLabel;
+    private GPolygon shopInfoBox;
 
-    public ArrayList<Turret> turretShop = new ArrayList<Turret>();
-    public ArrayList<GLabel> turretNameLabels = new ArrayList<GLabel>();
-    public ArrayList<GLabel> shopInfoLabels = new ArrayList<GLabel>();
-    public ArrayList<GLabel> turretPriceLabels = new ArrayList<GLabel>();
+    private ArrayList<Turret> turretShop = new ArrayList<>();
+    private ArrayList<GLabel> turretNameLabels = new ArrayList<>();
+    private ArrayList<GLabel> shopInfoLabels = new ArrayList<>();
+    private ArrayList<GLabel> turretPriceLabels = new ArrayList<>();
 
     //constructor
     public SideMenu() {
         createBackground();
-        this.shopLabel = createLabel(canvas.getWidth()-SIDE_MENU_WIDTH/2, 25, "25");
+        this.shopLabel = createLabel(canvas.getWidth()-SIDE_MENU_WIDTH/2.0, 25, "25");
         this.shopLabel.setLabel("SHOP");
         this.shopLabel.move(-this.shopLabel.getWidth()/2, 0);
         this.shopLabel.setColor(Color.BLACK);
         createCancel();
-        addTurret("destroyer", canvas.getWidth()-SIDE_MENU_WIDTH/2, 75.0);
-        addTurret("knocker", canvas.getWidth()-SIDE_MENU_WIDTH/2, 175.0);
-        addTurret("sniper", canvas.getWidth()-SIDE_MENU_WIDTH/2, 275.0);
-        addTurret("dome", canvas.getWidth()-SIDE_MENU_WIDTH/2, 375.0);
-        addTurret("rocketer", canvas.getWidth()-SIDE_MENU_WIDTH/2, 475.0);
+        addTurret("destroyer", canvas.getWidth()-SIDE_MENU_WIDTH/2.0, 75.0);
+        addTurret("knocker", canvas.getWidth()-SIDE_MENU_WIDTH/2.0, 175.0);
+        addTurret("sniper", canvas.getWidth()-SIDE_MENU_WIDTH/2.0, 275.0);
+        addTurret("dome", canvas.getWidth()-SIDE_MENU_WIDTH/2.0, 375.0);
+        addTurret("rocketer", canvas.getWidth()-SIDE_MENU_WIDTH/2.0, 475.0);
         addButton();
         addNextRoundLabel();
         addAuthor();
@@ -52,7 +51,7 @@ public class SideMenu implements TDConstants {
     /**
      * method creates background of the sidemenu
      */
-    public void createBackground() {
+    private void createBackground() {
         this.background = new GRect(SIDE_MENU_WIDTH, canvas.getHeight());
         this.background.setFilled(true);
         this.background.setColor(Color.GRAY);
@@ -62,7 +61,7 @@ public class SideMenu implements TDConstants {
     /**
      * method to create new shop item in side menu and labels for it
      */
-    public void addTurret(String type, double x, double y) {
+    private void addTurret(String type, double x, double y) {
         Turret turret = new Turret(type, x, y);
         this.turretShop.add(turret);
         GLabel labelName = createLabel(x, y+35, "15");
@@ -80,7 +79,7 @@ public class SideMenu implements TDConstants {
     /**
      * method to create start button GRect and Faster speed button
      */
-    public void addButton() {
+    private void addButton() {
         this.button = new GRect(SIDE_MENU_WIDTH-10, 30);
         this.button.setFilled(true);
         this.button.setColor(Color.GREEN);
@@ -96,14 +95,14 @@ public class SideMenu implements TDConstants {
     /**
      * method to create label for a start button and for the faster wave button
      */
-    public void addNextRoundLabel() {
+    private void addNextRoundLabel() {
         this.nextWaveLabel = new GLabel("Next wave");
         this.nextWaveLabel.setFont("Impact-25");
-        canvas.add(this.nextWaveLabel, canvas.getWidth()-SIDE_MENU_WIDTH/2-this.nextWaveLabel.getWidth()/2, this.button.getY()+25);
+        canvas.add(this.nextWaveLabel, canvas.getWidth()-SIDE_MENU_WIDTH/2.0-this.nextWaveLabel.getWidth()/2, this.button.getY()+25);
 
         this.fasterButtonLabel = new GLabel("Faster");
         this.fasterButtonLabel.setFont("Impact-25");
-        canvas.add(this.fasterButtonLabel, canvas.getWidth()-SIDE_MENU_WIDTH/2-this.fasterButtonLabel.getWidth()/2, this.fasterButton.getY()+25);
+        canvas.add(this.fasterButtonLabel, canvas.getWidth()-SIDE_MENU_WIDTH/2.0-this.fasterButtonLabel.getWidth()/2, this.fasterButton.getY()+25);
         this.fasterButtonLabel.setVisible(false);
 
     }
@@ -111,18 +110,18 @@ public class SideMenu implements TDConstants {
     /**
      * method to create cancel button
      */
-    public void createCancel() {
+    private void createCancel() {
         this.cancel = new GRect(SIDE_MENU_WIDTH-10, 60);
         this.cancel.setFilled(true);
         this.cancel.setColor(Color.RED);
-        this.cancel.setLocation(canvas.getWidth()-SIDE_MENU_WIDTH/2-this.cancel.getWidth()/2, canvas.getHeight()-125 );
+        this.cancel.setLocation(canvas.getWidth()-SIDE_MENU_WIDTH/2.0-this.cancel.getWidth()/2, canvas.getHeight()-125 );
     }
 
     /**
      * method to create author name label
      */
-    public void addAuthor() {
-        this.author = createLabel(canvas.getWidth()-SIDE_MENU_WIDTH/2, canvas.getHeight()-10, "17");
+    private void addAuthor() {
+        this.author = createLabel(canvas.getWidth()-SIDE_MENU_WIDTH/2.0, canvas.getHeight()-10, "17");
         this.author.setLabel("© 2019 dede64");
         this.author.move(-this.author.getWidth()/2, 0);
         this.author.setColor(Color.BLACK);
@@ -131,7 +130,7 @@ public class SideMenu implements TDConstants {
     /**
      * method to create a shop info box and labels on it
      */
-    public void addInfoBox() {
+    private void addInfoBox() {
         this.shopInfoBox = new GPolygon();
         for(int i = 0; i<INFO_BOX_X.length; i++){this.shopInfoBox.addVertex(INFO_BOX_X[i], INFO_BOX_Y[i]);}
         this.shopInfoBox.setFilled(true);
@@ -148,8 +147,8 @@ public class SideMenu implements TDConstants {
         GLabel info3 = createLabel(canvas.getWidth()-SIDE_MENU_WIDTH - 105, -50, "16");
         info3.setColor(Color.BLACK);
         this.shopInfoLabels.add(info3);
-        for(int i = 0; i < this.shopInfoLabels.size(); i++) {
-            this.shopInfoLabels.get(i).setVisible(false);
+        for (GLabel shopInfoLabel : this.shopInfoLabels) {
+            shopInfoLabel.setVisible(false);
         }
     }
 
@@ -163,5 +162,109 @@ public class SideMenu implements TDConstants {
         label.setColor(Color.GRAY);
         canvas.add(label, x, y);
         return label;
+    }
+
+    public GRect getBackground() {
+        return background;
+    }
+
+    public void setBackground(GRect background) {
+        this.background = background;
+    }
+
+    public GRect getButton() {
+        return button;
+    }
+
+    public void setButton(GRect button) {
+        this.button = button;
+    }
+
+    public GLabel getNextWaveLabel() {
+        return nextWaveLabel;
+    }
+
+    public void setNextWaveLabel(GLabel nextWaveLabel) {
+        this.nextWaveLabel = nextWaveLabel;
+    }
+
+    public GLabel getShopLabel() {
+        return shopLabel;
+    }
+
+    public void setShopLabel(GLabel shopLabel) {
+        this.shopLabel = shopLabel;
+    }
+
+    public GLabel getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(GLabel author) {
+        this.author = author;
+    }
+
+    public GRect getCancel() {
+        return cancel;
+    }
+
+    public void setCancel(GRect cancel) {
+        this.cancel = cancel;
+    }
+
+    public GRect getFasterButton() {
+        return fasterButton;
+    }
+
+    public void setFasterButton(GRect fasterButton) {
+        this.fasterButton = fasterButton;
+    }
+
+    public GLabel getFasterButtonLabel() {
+        return fasterButtonLabel;
+    }
+
+    public void setFasterButtonLabel(GLabel fasterButtonLabel) {
+        this.fasterButtonLabel = fasterButtonLabel;
+    }
+
+    public GPolygon getShopInfoBox() {
+        return shopInfoBox;
+    }
+
+    public void setShopInfoBox(GPolygon shopInfoBox) {
+        this.shopInfoBox = shopInfoBox;
+    }
+
+    public ArrayList<Turret> getTurretShop() {
+        return turretShop;
+    }
+
+    public void setTurretShop(ArrayList<Turret> turretShop) {
+        this.turretShop = turretShop;
+    }
+
+    public ArrayList<GLabel> getTurretNameLabels() {
+        return turretNameLabels;
+    }
+
+    public void setTurretNameLabels(ArrayList<GLabel> turretNameLabels) {
+        this.turretNameLabels = turretNameLabels;
+    }
+
+    public ArrayList<GLabel> getShopInfoLabels() {
+        return shopInfoLabels;
+    }
+
+    public void setShopInfoLabels(ArrayList<GLabel> shopInfoLabels) {
+        this.shopInfoLabels = shopInfoLabels;
+    }
+
+    public ArrayList<GLabel> getTurretPriceLabels() {
+        return turretPriceLabels;
+    }
+
+    public void setTurretPriceLabels(ArrayList<GLabel> turretPriceLabels) {
+        this.turretPriceLabels = turretPriceLabels;
     }
 }
