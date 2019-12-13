@@ -10,14 +10,14 @@ import static cz.dede.Main.canvas;
  * Class of Bullet object
  * */
 public class Bullet implements TDConstants {
-    public Enemy enemy;
-    public double speed;
-    public double dmg;
-    public double x;
-    public double y;
-    public double demage_radius;
-    public double last_rotation = 0;
-    public GPolygon bullet;
+    private Enemy enemy;
+    private double speed;
+    private double dmg;
+    private double x;
+    private double y;
+    private double demageRadius;
+    private double lastRotation = 0;
+    private GPolygon bullet;
 
     //constructor
     public Bullet(Enemy enemy, Turret turret, double x, double y) {
@@ -27,7 +27,7 @@ public class Bullet implements TDConstants {
         this.dmg = turret.dmg;
         this.speed = turret.bulletSpeed;
         this.bullet = createBullet();
-        this.demage_radius = turret.demage_radius;
+        this.demageRadius = turret.demage_radius;
     }
 
     /**
@@ -59,8 +59,72 @@ public class Bullet implements TDConstants {
         this.y += y_speed;
         this.bullet.setLocation(this.x, this.y);
         double rotation = Main.getAngle(0, this.x, 0, this.y);
-        this.bullet.rotate(-this.last_rotation);
+        this.bullet.rotate(-this.lastRotation);
         this.bullet.rotate(rotation);
-        this.last_rotation = rotation;
+        this.lastRotation = rotation;
+    }
+
+    public Enemy getEnemy() {
+        return enemy;
+    }
+
+    public void setEnemy(Enemy enemy) {
+        this.enemy = enemy;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public double getDmg() {
+        return dmg;
+    }
+
+    public void setDmg(double dmg) {
+        this.dmg = dmg;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public double getDemageRadius() {
+        return demageRadius;
+    }
+
+    public void setDemageRadius(double demageRadius) {
+        this.demageRadius = demageRadius;
+    }
+
+    public double getLastRotation() {
+        return lastRotation;
+    }
+
+    public void setLastRotation(double lastRotation) {
+        this.lastRotation = lastRotation;
+    }
+
+    public GPolygon getBullet() {
+        return bullet;
+    }
+
+    public void setBullet(GPolygon bullet) {
+        this.bullet = bullet;
     }
 }

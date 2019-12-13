@@ -183,7 +183,7 @@ public class Enemy implements TDConstants {
                 canvas.remove(greenBar);
                 canvas.remove(redBar);
                 enemies.remove(this);
-                player.lives-=1;
+                player.setLives(player.getLives() - 1);
             }
             else {
                 this.pathX.remove(0);
