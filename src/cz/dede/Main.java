@@ -13,6 +13,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static java.lang.Thread.sleep;
+
 public class Main extends GraphicsProgram implements TDConstants {
 
     //instance variables
@@ -55,8 +57,14 @@ public class Main extends GraphicsProgram implements TDConstants {
         waves = setWaves(waves);
         int waveCounter = 0;
 
+        long start = 0;
+        long timeElapsed = 1;
+        long cycleLength = 1;
+
         //MAIN LOOP
         while(true) {
+            start = System.nanoTime();
+
             moveEnemies(enemies, player);
             moveBullets(bullets);
             rotateCanons(turrets, enemies);
@@ -67,7 +75,7 @@ public class Main extends GraphicsProgram implements TDConstants {
             moveHealthBars(enemies);
             moveRangeIndicator(rangeIndicator, turrets, sideMenu);
             showShopInfo(sideMenu);
-            changeScoreLabel(player, score);
+            changeScoreLabel(player, score, cycleLength);
             checkClick(sideMenu, player);
             moveOnClick();
             placeTurret(turrets, player, sideMenu);
@@ -76,7 +84,20 @@ public class Main extends GraphicsProgram implements TDConstants {
             hideWaveButton(sideMenu, enemies, player);
 
             waveCounter += 1;
-            pause(player.getTick());
+
+
+            // Measuring time for compensating computation losses.
+            timeElapsed = System.nanoTime() - start;
+            long nsDif = timeElapsed;
+            if ((long) player.getTick() * 1000000 - nsDif < 0) nsDif = player.getTick() * 1000000;
+
+            try {
+                sleep((int)(player.getTick() * 1000000 - nsDif)/500000, (int)(player.getTick() * 1000000 - nsDif)%500000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            cycleLength = System.nanoTime() - start;
         }
     }
 
@@ -378,8 +399,8 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to change label with player score and lives
      */
-    private void changeScoreLabel(Player player, GLabel label) {
-        label.setLabel("Money: " + player.getMoney() + "$   Health: " + player.getLives() + "   Wave: " + (player.getWaveNumber() +1) + "   Score: " + player.getKilledEnemies());
+    private void changeScoreLabel(Player player, GLabel label, long cycleLength) {
+        label.setLabel("Money: " + (int) player.getMoney() + "$   Health: " + player.getLives() + "   Wave: " + (player.getWaveNumber() +1) + "   Score: " + player.getKilledEnemies() + " FPS: " + 1000000000/cycleLength);
     }
 
     /**
