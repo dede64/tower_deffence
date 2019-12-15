@@ -101,9 +101,6 @@ public class Main extends GraphicsProgram implements TDConstants {
         }
     }
 
-
-
-
     /**
      * method to move enemies
      */
@@ -143,17 +140,23 @@ public class Main extends GraphicsProgram implements TDConstants {
      */
     private void rotateCanons(ArrayList<Turret> turrets, ArrayList<Enemy> enemies) {
         for(Turret turret : turrets) {
-            if(!turret.type.equals("rocketer")) {
+            if(turret.currentLoad < turret.reloadTime && turret.target != null){
+                double angle = getAngle(turret.x, turret.y, turret.target.getX(), turret.target.getY());
+                turret.canon.rotate(-turret.last_rotation);
+                turret.last_rotation = angle;
+                turret.canon.rotate(angle);
+            }
+            else if(!turret.type.equals("rocketer")) {
                 boolean found = false;
                 for(Enemy enemy: enemies){
-                    if(turret.targetType.equals(enemy.movement) || turret.targetType.equals("air/ground")){
-                        double x_diff = enemy.x - turret.x;
-                        double y_diff = enemy.y - turret.y;
+                    if(turret.targetType.equals(enemy.getMovement()) || turret.targetType.equals("air/ground")){
+                        double x_diff = enemy.getX() - turret.x;
+                        double y_diff = enemy.getY() - turret.y;
                         double distance = Math.sqrt(Math.pow(x_diff, 2) + Math.pow(y_diff, 2));
                         if(distance <= turret.range){
                             found = true;
                             turret.target = enemy;
-                            double angle = getAngle(turret.x, turret.y, turret.target.x, turret.target.y);
+                            double angle = getAngle(turret.x, turret.y, turret.target.getX(), turret.target.getY());
                             turret.canon.rotate(-turret.last_rotation);
                             turret.last_rotation = angle;
                             turret.canon.rotate(angle);
@@ -171,9 +174,9 @@ public class Main extends GraphicsProgram implements TDConstants {
                 double health = 0;
                 turret.target = null;
                 for (Enemy enemy : enemies) {
-                    if (enemy.health > health && enemy.movement.equals(ROCKET_TARGET)) {
+                    if (enemy.getHealth() > health && enemy.getMovement().equals(ROCKET_TARGET)) {
                         turret.target = enemy;
-                        health = enemy.health;
+                        health = enemy.getHealth();
                     }
                 }
                 if (turret.target == null) {
@@ -181,7 +184,7 @@ public class Main extends GraphicsProgram implements TDConstants {
                     turret.last_rotation = 0;
                 }
                 else {
-                    double angle = getAngle(turret.x, turret.y, turret.target.x, turret.target.y);
+                    double angle = getAngle(turret.x, turret.y, turret.target.getX(), turret.target.getY());
                     turret.canon.rotate(-turret.last_rotation);
                     turret.last_rotation = angle;
                     turret.canon.rotate(angle);
@@ -207,11 +210,11 @@ public class Main extends GraphicsProgram implements TDConstants {
     private void checkCollisions(ArrayList<Bullet> bullets) {
         for(int b = bullets.size()-1; b>=0; b--) {
             Bullet bullet = bullets.get(b);
-            double x_diff = bullet.getX() - bullet.getEnemy().x;
-            double y_diff = bullet.getY() - bullet.getEnemy().y;
+            double x_diff = bullet.getX() - bullet.getEnemy().getX();
+            double y_diff = bullet.getY() - bullet.getEnemy().getY();
             double distance = Math.sqrt(Math.pow(x_diff, 2) + Math.pow(y_diff, 2));
             if(distance<=bullet.getDemageRadius()) {
-                bullet.getEnemy().health -= bullet.getDmg();
+                bullet.getEnemy().substractHealth(bullet.getDmg());
                 GPolygon shape = bullet.getBullet();
                 remove(shape);
                 bullets.remove(b);
@@ -240,14 +243,14 @@ public class Main extends GraphicsProgram implements TDConstants {
     private void checkHealth(ArrayList<Enemy> enemies, Player player, SideMenu sideMenu) {
         for(int e = enemies.size()-1; e>=0; e--) {
             Enemy enemy = enemies.get(e);
-            if(enemy.health<=0) {
-                GPolygon shape = enemy.vehicle;
-                GRect greenBar = enemy.greenHealth;
-                GRect redBar = enemy.redHealth;
+            if(enemy.getHealth()<=0) {
+                GPolygon shape = enemy.getVehicle();
+                GRect greenBar = enemy.getGreenHealth();
+                GRect redBar = enemy.getRedHealth();
                 remove(shape);
                 remove(greenBar);
                 remove(redBar);
-                player.setMoney(player.getMoney() + enemy.award * player.getMoneyBonus());
+                player.setMoney(player.getMoney() + enemy.getAward() * player.getMoneyBonus());
                 player.setKilledEnemies(player.getKilledEnemies() + 1);
                 enemies.remove(e);
                 colorShop(sideMenu, player);
@@ -260,8 +263,8 @@ public class Main extends GraphicsProgram implements TDConstants {
      */
     private void healEnemies(ArrayList<Enemy> enemies) {
         for(Enemy enemy: enemies){
-            if(enemy.healing > 0 && enemy.health < enemy.max_health){
-                enemy.health += enemy.healing;
+            if(enemy.getHealing() > 0 && enemy.getHealth() < enemy.getMaxHealth()){
+                enemy.heal(enemy.getHealing());
             }
         }
     }
@@ -271,7 +274,7 @@ public class Main extends GraphicsProgram implements TDConstants {
      */
     private void moveHealthBars(ArrayList<Enemy> enemies) {
         for(Enemy enemy: enemies) {
-            enemy.greenHealth.setSize(enemy.health/enemy.max_health*30, enemy.greenHealth.getHeight());
+            enemy.getGreenHealth().setSize(enemy.getHealth()/enemy.getMaxHealth()*30, enemy.getGreenHealth().getHeight());
         }
     }
 
@@ -298,6 +301,9 @@ public class Main extends GraphicsProgram implements TDConstants {
         mouseX = e.getX();
         mouseY = e.getY();
         mouseClick = true;
+
+//        GObject gObject = getElementAt(new GPoint(e.getPoint()));
+//        gObject.setColor(new Color(0xDEDE64));
     }
 
     /**
@@ -413,7 +419,9 @@ public class Main extends GraphicsProgram implements TDConstants {
             mouseClick = false;
         }
         else if(menu.getFasterButton().contains(mouseX, mouseY) && mouseClick && menu.getFasterButton().isVisible()) {
-            player.setTick(2);
+            player.setTick(FAST_TICK);
+//            menu.getFasterButton().setVisible(false); // TODO
+//            menu.getFasterButtonLabel().setVisible(false);
             mouseClick = false;
         }
         else if(mouseClick && onClick == null) {
@@ -546,13 +554,13 @@ public class Main extends GraphicsProgram implements TDConstants {
             enemies.add(new Enemy(wave.get(0), pathX, pathY, player.getWaveNumber()));
             double randomBoost = rg.nextDouble(0, WAVE_RANDOM_MUTATION);
             Enemy enemy = enemies.get(enemies.size()-1);
-            if(randomBoost < 1 && player.getWaveNumber() > WAVE_RANDOM_MUTATION_FIRST_WAVE && enemy.movement.equals("ground")) {
-                enemy.max_health = enemy.max_health * 10;
-                enemy.health = enemy.max_health;
-                enemy.healing *= 10;
-                enemy.speed = 1;
+            if(randomBoost < 1 && player.getWaveNumber() > WAVE_RANDOM_MUTATION_FIRST_WAVE && enemy.getMovement().equals("ground")) {
+                enemy.setMaxHealth(enemy.getMaxHealth() * 10);
+                enemy.setHealth(enemy.getMaxHealth());
+                enemy.setHealing(enemy.getHealing() * 10);
+                enemy.setSpeed(1);
                 Color color = new Color(60, 188, 212);
-                enemy.vehicle.setColor(color);
+                enemy.getVehicle().setColor(color);
             }
             wave.remove(0);
             if(wave.size()<1) {
@@ -610,7 +618,7 @@ public class Main extends GraphicsProgram implements TDConstants {
             menu.getNextWaveLabel().setVisible(true);
             player.setTick(TICK);
         }
-        if(enemies.size() > 0 && !menu.getFasterButton().isVisible()) {
+        if(enemies.size() > 0 && !menu.getFasterButton().isVisible()) { // TODO it should be controlled by start wave or killed last enemy of wave not by number of enemies
             menu.getFasterButton().setVisible(true);
             menu.getFasterButtonLabel().setVisible(true);
         }

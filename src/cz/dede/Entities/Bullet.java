@@ -49,8 +49,8 @@ public class Bullet implements TDConstants {
      * than it rotates the bullet in the direction of movement
      */
     public void move() {
-        double x_diff = this.enemy.x - this.x;
-        double y_diff = this.enemy.y - this.y;
+        double x_diff = this.enemy.getX() - this.x;
+        double y_diff = this.enemy.getY() - this.y;
         double distance = Math.sqrt(Math.pow(x_diff, 2) + Math.pow(y_diff, 2));
         double ratio = distance/this.speed;
         double x_speed = x_diff/ratio;

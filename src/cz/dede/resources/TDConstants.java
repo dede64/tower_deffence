@@ -17,6 +17,7 @@ public interface TDConstants {
     public static final int BOARD_HEIGHT = APPLICATION_HEIGHT;
 
     public static final int TICK = 10;
+    public static final int FAST_TICK = 2;
 
     //--------------------------------TURRETS-------------------------------------------
 

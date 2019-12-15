@@ -15,24 +15,24 @@ import static cz.dede.Main.canvas;
  * Class of Enemy object
  * */
 public class Enemy implements TDConstants {
-    public double speed;
-    public double max_health;
-    public double health;
-    public String type;
-    public int award;
-    public int healing;
-    public double x;
-    public double y;
-    public double lastRotation = 0;
-    public GPolygon vehicle;
-    public GRect greenHealth;
-    public GRect redHealth;
-    public ArrayList<Double> pathX;
-    public ArrayList<Double> pathY;
-    public double[] xCoordinates;
-    public double[] yCoordinates;
-    public String movement;
-    public int wave;
+    private double speed;
+    private double maxHealth;
+    private double health;
+    private String type;
+    private int award;
+    private int healing;
+    private double x;
+    private double y;
+    private double lastRotation = 0;
+    private GPolygon vehicle;
+    private GRect greenHealth;
+    private GRect redHealth;
+    private ArrayList<Double> pathX;
+    private ArrayList<Double> pathY;
+    private double[] xCoordinates;
+    private double[] yCoordinates;
+    private String movement;
+    private int wave;
 
     //constructor
     public Enemy(String type, ArrayList<Double> pathX, ArrayList<Double> pathY, int vawe_number) {
@@ -69,8 +69,8 @@ public class Enemy implements TDConstants {
     public void makePuncher() {
         this.speed = PUNCHER_SPEED;
         this.type = "puncher";
-        this.max_health = PUNCHER_HEALTH + PUNCHER_HEALTH*this.wave*WAVE_HEALTH_CONSTANT;
-        this.health = this.max_health;
+        this.maxHealth = PUNCHER_HEALTH + PUNCHER_HEALTH*this.wave*WAVE_HEALTH_CONSTANT;
+        this.health = this.maxHealth;
         this.award = PUNCHER_AWARD;
         this.healing = PUNCHER_HEALING;
         this.xCoordinates = PUNCHER_X;
@@ -84,8 +84,8 @@ public class Enemy implements TDConstants {
     public void makePuncherSpeeder() {
         this.speed = PUNCHER_SPEEDER_SPEED;
         this.type = "puncher_speeder";
-        this.max_health = PUNCHER_SPEEDER_HEALTH+ PUNCHER_SPEEDER_HEALTH*this.wave*WAVE_HEALTH_CONSTANT;
-        this.health = this.max_health;
+        this.maxHealth = PUNCHER_SPEEDER_HEALTH+ PUNCHER_SPEEDER_HEALTH*this.wave*WAVE_HEALTH_CONSTANT;
+        this.health = this.maxHealth;
         this.award = PUNCHER_SPEEDER_AWARD;
         this.healing = PUNCHER_SPEEDER_HEALING;
         this.xCoordinates = PUNCHER_X;
@@ -100,8 +100,8 @@ public class Enemy implements TDConstants {
     public void makePuncherHealer() {
         this.speed = PUNCHER_HEALER_SPEED;
         this.type = "puncher_healer";
-        this.max_health = PUNCHER_HEALER_HEALTH + PUNCHER_HEALER_HEALTH*this.wave*WAVE_HEALTH_CONSTANT;
-        this.health = this.max_health;
+        this.maxHealth = PUNCHER_HEALER_HEALTH + PUNCHER_HEALER_HEALTH*this.wave*WAVE_HEALTH_CONSTANT;
+        this.health = this.maxHealth;
         this.award = PUNCHER_HEALER_AWARD;
         this.healing = PUNCHER_HEALER_HEALING;
         this.xCoordinates = PUNCHER_X;
@@ -116,8 +116,8 @@ public class Enemy implements TDConstants {
     public void makeBriger() {
         this.speed = BRIGER_SPEED;
         this.type = "briger";
-        this.max_health = BRIGER_HEALTH + BRIGER_HEALTH*this.wave*WAVE_HEALTH_CONSTANT;
-        this.health = this.max_health;
+        this.maxHealth = BRIGER_HEALTH + BRIGER_HEALTH*this.wave*WAVE_HEALTH_CONSTANT;
+        this.health = this.maxHealth;
         this.award = BRIGER_AWARD;
         this.healing = BRIGER_HEALING;
         this.xCoordinates = BRIGER_X;
@@ -132,8 +132,8 @@ public class Enemy implements TDConstants {
         RandomGenerator rg = new RandomGenerator();
         this.speed = FLYER_SPEED;
         this.type = "flyer";
-        this.max_health = FLYER_HEALTH;
-        this.health = this.max_health;
+        this.maxHealth = FLYER_HEALTH;
+        this.health = this.maxHealth;
         this.award = FLYER_AWARD;
         this.healing = FLYER_HEALING;
         this.xCoordinates = FLYER_X;
@@ -242,5 +242,157 @@ public class Enemy implements TDConstants {
             newList.add(ar.get(i));
         }
         return newList;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public double getMaxHealth() {
+        return maxHealth;
+    }
+
+    public void setMaxHealth(double maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+    public double getHealth() {
+        return health;
+    }
+
+    public void setHealth(double health) {
+        this.health = health;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public int getAward() {
+        return award;
+    }
+
+    public void setAward(int award) {
+        this.award = award;
+    }
+
+    public int getHealing() {
+        return healing;
+    }
+
+    public void setHealing(int healing) {
+        this.healing = healing;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public double getLastRotation() {
+        return lastRotation;
+    }
+
+    public void setLastRotation(double lastRotation) {
+        this.lastRotation = lastRotation;
+    }
+
+    public GPolygon getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(GPolygon vehicle) {
+        this.vehicle = vehicle;
+    }
+
+    public GRect getGreenHealth() {
+        return greenHealth;
+    }
+
+    public void setGreenHealth(GRect greenHealth) {
+        this.greenHealth = greenHealth;
+    }
+
+    public GRect getRedHealth() {
+        return redHealth;
+    }
+
+    public void setRedHealth(GRect redHealth) {
+        this.redHealth = redHealth;
+    }
+
+    public ArrayList<Double> getPathX() {
+        return pathX;
+    }
+
+    public void setPathX(ArrayList<Double> pathX) {
+        this.pathX = pathX;
+    }
+
+    public ArrayList<Double> getPathY() {
+        return pathY;
+    }
+
+    public void setPathY(ArrayList<Double> pathY) {
+        this.pathY = pathY;
+    }
+
+    public double[] getxCoordinates() {
+        return xCoordinates;
+    }
+
+    public void setxCoordinates(double[] xCoordinates) {
+        this.xCoordinates = xCoordinates;
+    }
+
+    public double[] getyCoordinates() {
+        return yCoordinates;
+    }
+
+    public void setyCoordinates(double[] yCoordinates) {
+        this.yCoordinates = yCoordinates;
+    }
+
+    public String getMovement() {
+        return movement;
+    }
+
+    public void setMovement(String movement) {
+        this.movement = movement;
+    }
+
+    public int getWave() {
+        return wave;
+    }
+
+    public void setWave(int wave) {
+        this.wave = wave;
+    }
+
+    public void substractHealth(double demage){
+        this.health -= demage;
+    }
+
+    public void heal(double healing){
+        this.health += healing;
     }
 }
