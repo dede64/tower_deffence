@@ -140,54 +140,54 @@ public class Main extends GraphicsProgram implements TDConstants {
      */
     private void rotateCanons(ArrayList<Turret> turrets, ArrayList<Enemy> enemies) {
         for(Turret turret : turrets) {
-            if(turret.currentLoad < turret.reloadTime && turret.target != null){
-                double angle = getAngle(turret.x, turret.y, turret.target.getX(), turret.target.getY());
-                turret.canon.rotate(-turret.last_rotation);
-                turret.last_rotation = angle;
-                turret.canon.rotate(angle);
+            if(turret.getCurrentLoad() < turret.getReloadTime() && turret.getTarget() != null){
+                double angle = getAngle(turret.getX(), turret.getY(), turret.getTarget().getX(), turret.getTarget().getY());
+                turret.getCanon().rotate(-turret.getLastRotation());
+                turret.setLastRotation(angle);
+                turret.getCanon().rotate(angle);
             }
-            else if(!turret.type.equals("rocketer")) {
+            else if(!turret.getType().equals("rocketer")) {
                 boolean found = false;
                 for(Enemy enemy: enemies){
-                    if(turret.targetType.equals(enemy.getMovement()) || turret.targetType.equals("air/ground")){
-                        double x_diff = enemy.getX() - turret.x;
-                        double y_diff = enemy.getY() - turret.y;
+                    if(turret.getTargetType().equals(enemy.getMovement()) || turret.getTargetType().equals("air/ground")){
+                        double x_diff = enemy.getX() - turret.getX();
+                        double y_diff = enemy.getY() - turret.getY();
                         double distance = Math.sqrt(Math.pow(x_diff, 2) + Math.pow(y_diff, 2));
-                        if(distance <= turret.range){
+                        if(distance <= turret.getRange()){
                             found = true;
-                            turret.target = enemy;
-                            double angle = getAngle(turret.x, turret.y, turret.target.getX(), turret.target.getY());
-                            turret.canon.rotate(-turret.last_rotation);
-                            turret.last_rotation = angle;
-                            turret.canon.rotate(angle);
+                            turret.setTarget(enemy);
+                            double angle = getAngle(turret.getX(), turret.getY(), turret.getTarget().getX(), turret.getTarget().getY());
+                            turret.getCanon().rotate(-turret.getLastRotation());
+                            turret.setLastRotation(angle);
+                            turret.getCanon().rotate(angle);
                             break;
                         }
                     }
                 }
                 if(!found){
-                    turret.target = null;
-                    turret.canon.rotate(-turret.last_rotation);
-                    turret.last_rotation = 0;
+                    turret.setTarget(null);
+                    turret.getCanon().rotate(-turret.getLastRotation());
+                    turret.setLastRotation(0);
                 }
             }
             else{
                 double health = 0;
-                turret.target = null;
+                turret.setTarget(null);
                 for (Enemy enemy : enemies) {
                     if (enemy.getHealth() > health && enemy.getMovement().equals(ROCKET_TARGET)) {
-                        turret.target = enemy;
+                        turret.setTarget(enemy);
                         health = enemy.getHealth();
                     }
                 }
-                if (turret.target == null) {
-                    turret.canon.rotate(-turret.last_rotation);
-                    turret.last_rotation = 0;
+                if (turret.getTarget() == null) {
+                    turret.getCanon().rotate(-turret.getLastRotation());
+                    turret.setLastRotation(0);
                 }
                 else {
-                    double angle = getAngle(turret.x, turret.y, turret.target.getX(), turret.target.getY());
-                    turret.canon.rotate(-turret.last_rotation);
-                    turret.last_rotation = angle;
-                    turret.canon.rotate(angle);
+                    double angle = getAngle(turret.getX(), turret.getY(), turret.getTarget().getX(), turret.getTarget().getY());
+                    turret.getCanon().rotate(-turret.getLastRotation());
+                    turret.setLastRotation(angle);
+                    turret.getCanon().rotate(angle);
                 }
             }
         }
@@ -227,11 +227,11 @@ public class Main extends GraphicsProgram implements TDConstants {
      */
     private void shoot(ArrayList<Turret> turrets, ArrayList<Bullet> bullets) {
         for (Turret turret : turrets) {
-            if (turret.currentLoad < turret.reloadTime) {
-                turret.currentLoad += 1;
-            } else if (turret.target != null) {
-                bullets.add(new Bullet(turret.target, turret, turret.x, turret.y));
-                turret.currentLoad = 0;
+            if (turret.getCurrentLoad() < turret.getReloadTime()) {
+                turret.addReload();
+            } else if (turret.getTarget() != null) {
+                bullets.add(new Bullet(turret.getTarget(), turret, turret.getX(), turret.getY()));
+                turret.setCurrentLoad(0);
 //				ShootClip.play(); // TODO just for fun, but its buggy
             }
         }
@@ -332,22 +332,22 @@ public class Main extends GraphicsProgram implements TDConstants {
     private void moveRangeIndicator(GOval ri, ArrayList<Turret> turrets, SideMenu menu) {
         boolean successHover = false;
         for (Turret turret : turrets) {
-            if (turret.base.contains(mouseX, mouseY) || turret.canon.contains(mouseX, mouseY)) {
+            if (turret.getBase().contains(mouseX, mouseY) || turret.getCanon().contains(mouseX, mouseY)) {
                 successHover = true;
-                ri.setSize(turret.range * 2, turret.range * 2);
-                ri.setLocation(turret.x - turret.range, turret.y - turret.range);
+                ri.setSize(turret.getRange() * 2, turret.getRange() * 2);
+                ri.setLocation(turret.getX() - turret.getRange(), turret.getY() - turret.getRange());
             }
         }
         if (menu.getCancel().contains(mouseX, mouseY)&&onClick!=null) {
-            remove(onClick.base);
-            remove(onClick.canon);
+            remove(onClick.getBase());
+            remove(onClick.getCanon());
             remove(menu.getCancel());
             onClick = null;
             ri.setSize(0, 0);
         }
         if (onClick != null) {
-            ri.setSize(onClick.range*2, onClick.range*2);
-            ri.setLocation(onClick.x-onClick.range, onClick.y-onClick.range);
+            ri.setSize(onClick.getRange()*2, onClick.getRange()*2);
+            ri.setLocation(onClick.getX() - onClick.getRange(), onClick.getY() - onClick.getRange());
             successHover = true;
         }
         if (!successHover) {
@@ -361,20 +361,20 @@ public class Main extends GraphicsProgram implements TDConstants {
     private void showShopInfo(SideMenu menu) {
         if (onClick == null) {
             for(Turret turret : menu.getTurretShop()) {
-                if (turret.base.contains(mouseX, mouseY)||turret.canon.contains(mouseX, mouseY)) {
+                if (turret.getBase().contains(mouseX, mouseY)||turret.getCanon().contains(mouseX, mouseY)) {
                     // Move GPolygon
                     menu.getShopInfoBox().setVisible(true);
-                    menu.getShopInfoBox().setLocation(menu.getShopInfoBox().getX(), turret.base.getY());
+                    menu.getShopInfoBox().setLocation(menu.getShopInfoBox().getX(), turret.getBase().getY());
                     // Change labels
                     GLabel label1 = menu.getShopInfoLabels().get(0);
-                    label1.setLabel(turret.cost + "$  " + (int)turret.dmg + "DMG");
-                    label1.setLocation(label1.getX(), turret.base.getY() -20);
+                    label1.setLabel(turret.getCost() + "$  " + (int)turret.getDmg() + "DMG");
+                    label1.setLocation(label1.getX(), turret.getBase().getY() -20);
                     GLabel label2 = menu.getShopInfoLabels().get(1);
-                    label2.setLabel(TICK / 1000.0 * turret.reloadTime + "s  " + (int)turret.range + "m " + (int)turret.bulletSpeed + "m/s");
-                    label2.setLocation(label2.getX(), turret.base.getY() +10);
+                    label2.setLabel(TICK / 1000.0 * turret.getReloadTime() + "s  " + (int)turret.getRange() + "m " + (int)turret.getBulletSpeed() + "m/s");
+                    label2.setLocation(label2.getX(), turret.getBase().getY() +10);
                     GLabel label3 = menu.getShopInfoLabels().get(2);
-                    label3.setLabel("anti " + turret.targetType);
-                    label3.setLocation(label3.getX(), turret.base.getY() +40);
+                    label3.setLabel("anti " + turret.getTargetType());
+                    label3.setLocation(label3.getX(), turret.getBase().getY() +40);
                     for(GLabel label: menu.getShopInfoLabels()) {
                         label.setVisible(true);
                     }
@@ -426,9 +426,9 @@ public class Main extends GraphicsProgram implements TDConstants {
         }
         else if(mouseClick && onClick == null) {
             for(int i = 0; i< menu.getTurretShop().size(); i++) {
-                if(menu.getTurretShop().get(i).base.contains(mouseX, mouseY)||menu.getTurretShop().get(i).canon.contains(mouseX, mouseY)) {
-                    if(player.getMoney()>=menu.getTurretShop().get(i).cost) {
-                        onClick = new Turret(menu.getTurretShop().get(i).type, mouseX, mouseY);
+                if(menu.getTurretShop().get(i).getBase().contains(mouseX, mouseY)||menu.getTurretShop().get(i).getCanon().contains(mouseX, mouseY)) {
+                    if(player.getMoney()>=menu.getTurretShop().get(i).getCost()) {
+                        onClick = new Turret(menu.getTurretShop().get(i).getType(), mouseX, mouseY);
                         add(menu.getCancel());
                     }
                 }
@@ -456,12 +456,12 @@ public class Main extends GraphicsProgram implements TDConstants {
         double currentX = mouseX;
         double currentY = mouseY;
         if(onClick != null && mouseRelease && placeAvailable(currentX, currentY, turrets)) {
-            turrets.add(new Turret(onClick.type, currentX-currentX%40+20, currentY-currentY%40+20));
-            for (Turret turret : turrets) turret.canon.sendToFront();
+            turrets.add(new Turret(onClick.getType(), currentX-currentX%40+20, currentY-currentY%40+20));
+            for (Turret turret : turrets) turret.getCanon().sendToFront();
             mouseRelease = false;
-            remove(onClick.base);
-            remove(onClick.canon);
-            player.setMoney(player.getMoney() - onClick.cost);
+            remove(onClick.getBase());
+            remove(onClick.getCanon());
+            player.setMoney(player.getMoney() - onClick.getCost());
             remove(menu.getCancel());
             onClick = null;
             checkTurretCombination(turrets, player);
@@ -478,7 +478,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     private void colorShop(SideMenu menu, Player player) {
         for(int i = 0; i < menu.getTurretShop().size(); i++) {
             Turret turret = menu.getTurretShop().get(i);
-            if(turret.cost>player.getMoney()) {
+            if(turret.getCost() > player.getMoney()) {
                 menu.getTurretNameLabels().get(i).setColor(Color.RED);
             }
             else {
@@ -493,7 +493,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     private boolean placeAvailable(double x, double y, ArrayList<Turret> turrets){
         boolean available = true;
         for (Turret turret : turrets) {
-            if (turret.base.contains(x - x % 40 + 20, y - y % 40 + 20)) {
+            if (turret.getBase().contains(x - x % 40 + 20, y - y % 40 + 20)) {
                 available = false;
             }
         }
@@ -634,25 +634,25 @@ public class Main extends GraphicsProgram implements TDConstants {
     private void checkTurretCombination(ArrayList<Turret> turrets, Player player) {
         for(int i = turrets.size()-1; i>=0; i--) {
             Turret turret = turrets.get(i);
-            if(turret.type.equals("destroyer")) {
-                double x = turret.base.getX();
-                double y = turret.base.getY();
+            if(turret.getType().equals("destroyer")) {
+                double x = turret.getBase().getX();
+                double y = turret.getBase().getY();
                 Turret tTop = null;
                 Turret tCorner = null;
                 Turret tRight = null;
                 for (Turret checkTurret : turrets) {
-                    if (checkTurret.base.contains(x, y - 40)) {
+                    if (checkTurret.getBase().contains(x, y - 40)) {
                         tTop = checkTurret;
                     }
-                    if (checkTurret.base.contains(x + 40, y - 40)) {
+                    if (checkTurret.getBase().contains(x + 40, y - 40)) {
                         tCorner = checkTurret;
                     }
-                    if (checkTurret.base.contains(x + 40, y)) {
+                    if (checkTurret.getBase().contains(x + 40, y)) {
                         tRight = checkTurret;
                     }
                 }
                 if(tTop != null && tCorner != null & tRight != null) {
-                    if(tTop.type.equals("destroyer") && tCorner.type.equals("destroyer") && tRight.type.equals("destroyer")) {
+                    if(tTop.getType().equals("destroyer") && tCorner.getType().equals("destroyer") && tRight.getType().equals("destroyer")) {
                         deleteTurret(turret);
                         deleteTurret(tTop);
                         deleteTurret(tCorner);
@@ -664,7 +664,7 @@ public class Main extends GraphicsProgram implements TDConstants {
                         Turret bonus = new Turret("bonus", x + 20, y - 20);
                         turrets.add(bonus);
                         for (Turret turret1 : turrets) {
-                            turret1.canon.sendToFront();
+                            turret1.getCanon().sendToFront();
                         }
                         player.setMoneyBonus(player.getMoneyBonus() + BONUS_MONEY);
                         return;
@@ -678,8 +678,8 @@ public class Main extends GraphicsProgram implements TDConstants {
      * method to delete turret shape from screen
      */
     private void deleteTurret(Turret turret) {
-        remove(turret.base);
-        remove(turret.canon);
+        remove(turret.getBase());
+        remove(turret.getCanon());
     }
 }
 

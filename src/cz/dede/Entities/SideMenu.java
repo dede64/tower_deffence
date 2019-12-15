@@ -65,12 +65,12 @@ public class SideMenu implements TDConstants {
         Turret turret = new Turret(type, x, y);
         this.turretShop.add(turret);
         GLabel labelName = createLabel(x, y+35, "15");
-        labelName.setLabel(turret.type);
+        labelName.setLabel(turret.getType());
         labelName.setColor(Color.CYAN);
         labelName.move(-labelName.getWidth()/2, 0);
         this.turretNameLabels.add(labelName);
         GLabel label = createLabel(x, y+50, "15");
-        label.setLabel(turret.cost + "$");
+        label.setLabel(turret.getCost() + "$");
         label.setColor(Color.BLACK);
         label.move(-label.getWidth()/2, 0);
         this.turretPriceLabels.add(label);

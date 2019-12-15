@@ -24,10 +24,10 @@ public class Bullet implements TDConstants {
         this.enemy = enemy;
         this.x = x;
         this.y = y;
-        this.dmg = turret.dmg;
-        this.speed = turret.bulletSpeed;
+        this.dmg = turret.getDmg();
+        this.speed = turret.getBulletSpeed();
         this.bullet = createBullet();
-        this.demageRadius = turret.demage_radius;
+        this.demageRadius = turret.getDemageRadius();
     }
 
     /**

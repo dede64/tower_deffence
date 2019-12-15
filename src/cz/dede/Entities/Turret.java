@@ -16,25 +16,25 @@ import static cz.dede.Main.canvas;
  * Class of Turret object
  * */
 public class Turret implements TDConstants {
-    public String type;
-    public  String targetType;
-    public double range;
-    public double dmg; //TODO create getter and setter
-    public int reloadTime;
-    public int currentLoad;
-    public double bulletSpeed;
-    public double x;
-    public double y;
-    public double demage_radius;
-    public GPolygon base;
-    public GPolygon canon;
-    public int cost;
-    public Enemy target;
-    public double last_rotation = 0;
-    public double[] xBaseCoordinates;
-    public double[] yBaseCoordinates;
-    public double[] xCanonCoordinates;
-    public double[] yCanonCoordinates;
+    private String type;
+    private String targetType;
+    private double range;
+    private double dmg; //TODO create getter and setter
+    private int reloadTime;
+    private int currentLoad;
+    private double bulletSpeed;
+    private double x;
+    private double y;
+    private double demageRadius;
+    private GPolygon base;
+    private GPolygon canon;
+    private int cost;
+    private Enemy target;
+    private double lastRotation = 0;
+    private double[] xBaseCoordinates;
+    private double[] yBaseCoordinates;
+    private double[] xCanonCoordinates;
+    private double[] yCanonCoordinates;
 
     //constructor
     public Turret(String type, double x, double y) {
@@ -78,7 +78,7 @@ public class Turret implements TDConstants {
         this.yCanonCoordinates = DESTROYER_CANON_Y;
         this.base = createBase(Color.DARK_GRAY, this.xBaseCoordinates, this.yBaseCoordinates);
         this.canon = createCanon(Color.BLACK, this.xCanonCoordinates, this.yCanonCoordinates);
-        this.demage_radius = DEMAGE_RADIUS;
+        this.demageRadius = DEMAGE_RADIUS;
         this.currentLoad = this.reloadTime;
     }
 
@@ -100,7 +100,7 @@ public class Turret implements TDConstants {
         Color color = new Color(150,150,150);
         this.base = createBase(color, this.xBaseCoordinates, this.yBaseCoordinates);
         this.canon = createCanon(Color.BLUE, this.xCanonCoordinates, this.yCanonCoordinates);
-        this.demage_radius = DEMAGE_RADIUS;
+        this.demageRadius = DEMAGE_RADIUS;
         this.currentLoad = this.reloadTime;
     }
 
@@ -121,7 +121,7 @@ public class Turret implements TDConstants {
         this.yCanonCoordinates = SNIPER_CANON_Y;
         this.base = createBase(Color.DARK_GRAY, this.xBaseCoordinates, this.yBaseCoordinates);
         this.canon = createCanon(Color.BLACK, this.xCanonCoordinates, this.yCanonCoordinates);
-        this.demage_radius = DEMAGE_RADIUS;
+        this.demageRadius = DEMAGE_RADIUS;
         this.currentLoad = this.reloadTime;
     }
 
@@ -142,7 +142,7 @@ public class Turret implements TDConstants {
         this.yCanonCoordinates = DESTROYER_CANON_Y;
         this.base = createBase(new Color(60, 60, 150), this.xBaseCoordinates, this.yBaseCoordinates);
         this.canon = createCanon(Color.BLACK, this.xCanonCoordinates, this.yCanonCoordinates);
-        this.demage_radius = DEMAGE_RADIUS;
+        this.demageRadius = DEMAGE_RADIUS;
         this.currentLoad = this.reloadTime;
     }
 
@@ -163,7 +163,7 @@ public class Turret implements TDConstants {
         this.yCanonCoordinates = ROCKET_CANON_Y;
         this.base = createBase(Color.DARK_GRAY, this.xBaseCoordinates, this.yBaseCoordinates);
         this.canon = createCanon(Color.BLACK, this.xCanonCoordinates, this.yCanonCoordinates);
-        this.demage_radius = DEMAGE_RADIUS;
+        this.demageRadius = DEMAGE_RADIUS;
         this.currentLoad = this.reloadTime;
     }
 
@@ -184,7 +184,7 @@ public class Turret implements TDConstants {
         this.yCanonCoordinates = BONUS_CANON_Y;
         this.base = createBase(Color.DARK_GRAY, this.xBaseCoordinates, this.yBaseCoordinates);
         this.canon = createCanon(Color.BLACK, this.xCanonCoordinates, this.yCanonCoordinates);
-        this.demage_radius = DEMAGE_RADIUS;
+        this.demageRadius = DEMAGE_RADIUS;
         this.currentLoad = this.reloadTime;
     }
 
@@ -226,5 +226,165 @@ public class Turret implements TDConstants {
         this.y = y;
         this.base.setLocation(this.x, this.y);
         this.canon.setLocation(this.x, this.y);
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getTargetType() {
+        return targetType;
+    }
+
+    public void setTargetType(String targetType) {
+        this.targetType = targetType;
+    }
+
+    public double getRange() {
+        return range;
+    }
+
+    public void setRange(double range) {
+        this.range = range;
+    }
+
+    public double getDmg() {
+        return dmg;
+    }
+
+    public void setDmg(double dmg) {
+        this.dmg = dmg;
+    }
+
+    public int getReloadTime() {
+        return reloadTime;
+    }
+
+    public void setReloadTime(int reloadTime) {
+        this.reloadTime = reloadTime;
+    }
+
+    public int getCurrentLoad() {
+        return currentLoad;
+    }
+
+    public void setCurrentLoad(int currentLoad) {
+        this.currentLoad = currentLoad;
+    }
+
+    public double getBulletSpeed() {
+        return bulletSpeed;
+    }
+
+    public void setBulletSpeed(double bulletSpeed) {
+        this.bulletSpeed = bulletSpeed;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public double getDemageRadius() {
+        return demageRadius;
+    }
+
+    public void setDemageRadius(double demageRadius) {
+        this.demageRadius = demageRadius;
+    }
+
+    public GPolygon getBase() {
+        return base;
+    }
+
+    public void setBase(GPolygon base) {
+        this.base = base;
+    }
+
+    public GPolygon getCanon() {
+        return canon;
+    }
+
+    public void setCanon(GPolygon canon) {
+        this.canon = canon;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+    public Enemy getTarget() {
+        return target;
+    }
+
+    public void setTarget(Enemy target) {
+        this.target = target;
+    }
+
+    public double getLastRotation() {
+        return lastRotation;
+    }
+
+    public void setLastRotation(double lastRotation) {
+        this.lastRotation = lastRotation;
+    }
+
+    public double[] getxBaseCoordinates() {
+        return xBaseCoordinates;
+    }
+
+    public void setxBaseCoordinates(double[] xBaseCoordinates) {
+        this.xBaseCoordinates = xBaseCoordinates;
+    }
+
+    public double[] getyBaseCoordinates() {
+        return yBaseCoordinates;
+    }
+
+    public void setyBaseCoordinates(double[] yBaseCoordinates) {
+        this.yBaseCoordinates = yBaseCoordinates;
+    }
+
+    public double[] getxCanonCoordinates() {
+        return xCanonCoordinates;
+    }
+
+    public void setxCanonCoordinates(double[] xCanonCoordinates) {
+        this.xCanonCoordinates = xCanonCoordinates;
+    }
+
+    public double[] getyCanonCoordinates() {
+        return yCanonCoordinates;
+    }
+
+    public void setyCanonCoordinates(double[] yCanonCoordinates) {
+        this.yCanonCoordinates = yCanonCoordinates;
+    }
+
+    public void addReload(int reload){
+        this.currentLoad += reload;
+    }
+
+    public void addReload(){
+        this.addReload(1);
     }
 }
