@@ -18,6 +18,7 @@ public interface TDConstants {
 
     public static final int TICK = 8;
     public static final int FAST_TICK = 2;
+    public static final int AVERAGE_FPS = 40;
 
     //--------------------------------TURRETS-------------------------------------------
 

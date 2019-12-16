@@ -23,6 +23,7 @@ public class SideMenu implements TDConstants {
     private GRect fasterButton;
     private GLabel fasterButtonLabel;
     private GPolygon shopInfoBox;
+    private boolean shopIsHidden = false;
 
     private ArrayList<Turret> turretShop = new ArrayList<>();
     private ArrayList<GLabel> turretNameLabels = new ArrayList<>();
@@ -162,6 +163,34 @@ public class SideMenu implements TDConstants {
         label.setColor(Color.GRAY);
         canvas.add(label, x, y);
         return label;
+    }
+
+    public void hideShop(){
+        if(!this.shopIsHidden){
+            for(int i = 0; i < turretShop.size(); i++){
+                turretNameLabels.get(i).setVisible(false);
+                turretPriceLabels.get(i).setVisible(false);
+                turretShop.get(i).getBase().setVisible(false);
+                turretShop.get(i).getCanon().setVisible(false);
+            }
+            this.shopLabel.setVisible(false);
+            this.background.sendToFront();
+            this.shopIsHidden = true;
+        }
+    }
+
+    public void showShop(){
+        if(this.shopIsHidden){
+            for(int i = 0; i < turretShop.size(); i++){
+                turretNameLabels.get(i).setVisible(true);
+                turretPriceLabels.get(i).setVisible(true);
+                turretShop.get(i).getBase().setVisible(true);
+                turretShop.get(i).getCanon().setVisible(true);
+            }
+            this.shopLabel.setVisible(true);
+            this.background.sendToBack();
+            this.shopIsHidden = false;
+        }
     }
 
     public GRect getBackground() {

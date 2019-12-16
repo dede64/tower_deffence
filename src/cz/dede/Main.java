@@ -6,12 +6,15 @@ import acm.util.MediaTools;
 import acm.util.RandomGenerator;
 import cz.dede.Entities.*;
 import cz.dede.resources.TDConstants;
+import javafx.geometry.Side;
 
 import java.applet.AudioClip;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import static java.lang.Thread.sleep;
 
@@ -24,6 +27,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     private boolean mouseRelease = false;
     private Turret onClick = null;
     public static GCanvas canvas;
+    private GObject lastClicked = null;
 
     /** A random number generator **/
     private RandomGenerator rg = new RandomGenerator();
@@ -50,6 +54,9 @@ public class Main extends GraphicsProgram implements TDConstants {
         GOval rangeIndicator = createIndicator();
         SideMenu sideMenu = new SideMenu();
         GLabel score = createLabel(5, 20, "20");
+        ArrayList<Integer> lastFps = new ArrayList<>();
+        lastFps.add(1);
+
         addMouseListeners();
         colorShop(sideMenu, player);
 
@@ -75,18 +82,19 @@ public class Main extends GraphicsProgram implements TDConstants {
             moveHealthBars(enemies);
             moveRangeIndicator(rangeIndicator, turrets, sideMenu);
             showShopInfo(sideMenu);
-            changeScoreLabel(player, score, cycleLength);
+            changeScoreLabel(player, score, lastFps);
             checkClick(sideMenu, player);
             moveOnClick();
             placeTurret(turrets, player, sideMenu);
             addEnemies(enemies, waves, waveCounter, pathX, pathY, player);
             checkPlayerLives(player);
             hideWaveButton(sideMenu, enemies, player);
+            processClicks(sideMenu, turrets);
 
             waveCounter += 1;
 
 
-            // Measuring time for compensating computation losses.
+            // Measuring time for compensating computation losses. //TODO move to function
             timeElapsed = System.nanoTime() - start;
             long nsDif = timeElapsed;
             if ((long) player.getTick() * 1000000 - nsDif < 0) nsDif = player.getTick() * 1000000;
@@ -98,6 +106,10 @@ public class Main extends GraphicsProgram implements TDConstants {
             }
 
             cycleLength = System.nanoTime() - start;
+            lastFps.add((int) (1000000000/cycleLength));
+            if(lastFps.size() > AVERAGE_FPS){
+                lastFps.remove(0);
+            }
         }
     }
 
@@ -302,8 +314,9 @@ public class Main extends GraphicsProgram implements TDConstants {
         mouseY = e.getY();
         mouseClick = true;
 
-//        GObject gObject = getElementAt(new GPoint(e.getPoint()));
-//        gObject.setColor(new Color(0xDEDE64));
+        GObject gObject = getElementAt(new GPoint(e.getPoint()));
+        lastClicked = gObject;
+
     }
 
     /**
@@ -315,6 +328,15 @@ public class Main extends GraphicsProgram implements TDConstants {
         if(onClick!=null) {
             mouseRelease = true;
         }
+    }
+
+    public Object getObject(GObject object, ArrayList<Turret> turrets){
+        for(Turret turret: turrets){
+            if(turret.getCanon().equals(object) || turret.getBase().equals(object)){
+                return turret;
+            }
+        }
+        return null;
     }
 
     /**
@@ -405,8 +427,10 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to change label with player score and lives
      */
-    private void changeScoreLabel(Player player, GLabel label, long cycleLength) {
-        label.setLabel("Money: " + (int) player.getMoney() + "$   Health: " + player.getLives() + "   Wave: " + (player.getWaveNumber() +1) + "   Score: " + player.getKilledEnemies() + " FPS: " + 1000000000/cycleLength);
+    private void changeScoreLabel(Player player, GLabel label, ArrayList<Integer> lastFps) {
+        int sumOfAll = lastFps.stream().mapToInt(value -> value).sum();
+        int averageFps = sumOfAll / lastFps.size();
+        label.setLabel("Money: " + (int) player.getMoney() + "$   Health: " + player.getLives() + "   Wave: " + (player.getWaveNumber() +1) + "   Score: " + player.getKilledEnemies() + " FPS: " + averageFps);
     }
 
     /**
@@ -424,7 +448,7 @@ public class Main extends GraphicsProgram implements TDConstants {
 //            menu.getFasterButtonLabel().setVisible(false);
             mouseClick = false;
         }
-        else if(mouseClick && onClick == null) {
+        else if(mouseClick && onClick == null) { // TODO do this by getObject method - this will pick up the shop item even if it is hidden
             for(int i = 0; i< menu.getTurretShop().size(); i++) {
                 if(menu.getTurretShop().get(i).getBase().contains(mouseX, mouseY)||menu.getTurretShop().get(i).getCanon().contains(mouseX, mouseY)) {
                     if(player.getMoney()>=menu.getTurretShop().get(i).getCost()) {
@@ -680,6 +704,18 @@ public class Main extends GraphicsProgram implements TDConstants {
     private void deleteTurret(Turret turret) {
         remove(turret.getBase());
         remove(turret.getCanon());
+    }
+
+
+    private void processClicks(SideMenu sideMenu, ArrayList<Turret> turrets){
+        if(lastClicked != null){
+            Object obj = getObject(lastClicked, turrets);
+            if (obj instanceof Turret){
+                sideMenu.hideShop();
+            }else{
+                sideMenu.showShop();
+            }
+        }
     }
 }
 
