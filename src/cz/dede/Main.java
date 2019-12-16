@@ -92,7 +92,7 @@ public class Main extends GraphicsProgram implements TDConstants {
             if ((long) player.getTick() * 1000000 - nsDif < 0) nsDif = player.getTick() * 1000000;
 
             try {
-                sleep((int)(player.getTick() * 1000000 - nsDif)/500000, (int)(player.getTick() * 1000000 - nsDif)%500000);
+                sleep((int)(player.getTick() * 1000000 - nsDif)/1000000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
