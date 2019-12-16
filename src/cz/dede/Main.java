@@ -89,7 +89,7 @@ public class Main extends GraphicsProgram implements TDConstants {
             addEnemies(enemies, waves, waveCounter, pathX, pathY, player);
             checkPlayerLives(player);
             hideWaveButton(sideMenu, enemies, player);
-            processClicks(sideMenu, turrets);
+            processClicks(sideMenu, turrets, player);
 
             waveCounter += 1;
 
@@ -314,8 +314,7 @@ public class Main extends GraphicsProgram implements TDConstants {
         mouseY = e.getY();
         mouseClick = true;
 
-        GObject gObject = getElementAt(new GPoint(e.getPoint()));
-        lastClicked = gObject;
+        lastClicked = getElementAt(new GPoint(e.getPoint()));
 
     }
 
@@ -328,15 +327,6 @@ public class Main extends GraphicsProgram implements TDConstants {
         if(onClick!=null) {
             mouseRelease = true;
         }
-    }
-
-    public Object getObject(GObject object, ArrayList<Turret> turrets){
-        for(Turret turret: turrets){
-            if(turret.getCanon().equals(object) || turret.getBase().equals(object)){
-                return turret;
-            }
-        }
-        return null;
     }
 
     /**
@@ -353,7 +343,7 @@ public class Main extends GraphicsProgram implements TDConstants {
      */
     private void moveRangeIndicator(GOval ri, ArrayList<Turret> turrets, SideMenu menu) {
         boolean successHover = false;
-        for (Turret turret : turrets) {
+        for (Turret turret : turrets) { //TODO use method getElementAt
             if (turret.getBase().contains(mouseX, mouseY) || turret.getCanon().contains(mouseX, mouseY)) {
                 successHover = true;
                 ri.setSize(turret.getRange() * 2, turret.getRange() * 2);
@@ -382,8 +372,8 @@ public class Main extends GraphicsProgram implements TDConstants {
      */
     private void showShopInfo(SideMenu menu) {
         if (onClick == null) {
-            for(Turret turret : menu.getTurretShop()) {
-                if (turret.getBase().contains(mouseX, mouseY)||turret.getCanon().contains(mouseX, mouseY)) {
+            for(Turret turret : menu.getTurretShop()) {//TODO use method getElementAt
+                if ((turret.getBase().contains(mouseX, mouseY)||turret.getCanon().contains(mouseX, mouseY))&& turret.getCanon().isVisible() ){
                     // Move GPolygon
                     menu.getShopInfoBox().setVisible(true);
                     menu.getShopInfoBox().setLocation(menu.getShopInfoBox().getX(), turret.getBase().getY());
@@ -433,36 +423,6 @@ public class Main extends GraphicsProgram implements TDConstants {
         label.setLabel("Money: " + (int) player.getMoney() + "$   Health: " + player.getLives() + "   Wave: " + (player.getWaveNumber() +1) + "   Score: " + player.getKilledEnemies() + " FPS: " + averageFps);
     }
 
-    /**
-     * method to grab item from shop, when clicked on it
-     * method to check start button, to start new vawe, if the last is killed
-     */
-    private void checkClick(SideMenu menu, Player player) {
-        if(!player.getStarted() && menu.getButton().contains(mouseX, mouseY) && mouseClick && menu.getButton().isVisible()) {
-            player.setStarted(true);
-            mouseClick = false;
-        }
-        else if(menu.getFasterButton().contains(mouseX, mouseY) && mouseClick && menu.getFasterButton().isVisible()) {
-            player.setTick(FAST_TICK);
-//            menu.getFasterButton().setVisible(false); // TODO
-//            menu.getFasterButtonLabel().setVisible(false);
-            mouseClick = false;
-        }
-        else if(mouseClick && onClick == null) { // TODO do this by getObject method - this will pick up the shop item even if it is hidden
-            for(int i = 0; i< menu.getTurretShop().size(); i++) {
-                if(menu.getTurretShop().get(i).getBase().contains(mouseX, mouseY)||menu.getTurretShop().get(i).getCanon().contains(mouseX, mouseY)) {
-                    if(player.getMoney()>=menu.getTurretShop().get(i).getCost()) {
-                        onClick = new Turret(menu.getTurretShop().get(i).getType(), mouseX, mouseY);
-                        add(menu.getCancel());
-                    }
-                }
-            }
-            mouseClick = false;
-        }
-        else {
-            mouseClick = false;
-        }
-    }
 
     /**
      * method to move shop item which is currently chosen on the field
@@ -706,16 +666,76 @@ public class Main extends GraphicsProgram implements TDConstants {
         remove(turret.getCanon());
     }
 
+    public Object getObject(GObject object, ArrayList<Turret> turrets, SideMenu sideMenu){ // TODO it should handle all events which uses mouse click event
+        for(Turret turret: turrets){
+            if(turret.getCanon().equals(object) || turret.getBase().equals(object)){
+                return turret;
+            }
+        }
+        for(Turret turret : sideMenu.getTurretShop()){
+            if(turret.getCanon().equals(object) || turret.getBase().equals(object)){
+                return turret;
+            }
+        }
+        return null;
 
-    private void processClicks(SideMenu sideMenu, ArrayList<Turret> turrets){
+    }
+
+    private void processClicks(SideMenu sideMenu, ArrayList<Turret> turrets, Player player){
         if(lastClicked != null){
-            Object obj = getObject(lastClicked, turrets);
-            if (obj instanceof Turret){
+            Object obj = getObject(lastClicked, turrets, sideMenu);
+            lastClicked = null;
+
+            if (obj instanceof Turret && turrets.contains(obj)){
                 sideMenu.hideShop();
+                mouseClick = false;
+                return;
             }else{
                 sideMenu.showShop();
             }
+
+            if(obj instanceof Turret && sideMenu.getTurretShop().contains(obj)){
+                if(player.getMoney() >= ((Turret) obj).getCost()){
+                    onClick = new Turret(((Turret) obj).getType(), mouseX, mouseY);
+                    add(sideMenu.getCancel());
+                }
+                mouseClick = false;
+                return;
+            }
+
+
         }
+    }
+
+    /**
+     * method to grab item from shop, when clicked on it
+     * method to check start button, to start new vawe, if the last is killed
+     */
+    private void checkClick(SideMenu menu, Player player) {
+        if(!player.getStarted() && menu.getButton().contains(mouseX, mouseY) && mouseClick && menu.getButton().isVisible()) { //TODO create method button and movo to method processClicks
+            player.setStarted(true);
+            mouseClick = false;
+        }
+        else if(menu.getFasterButton().contains(mouseX, mouseY) && mouseClick && menu.getFasterButton().isVisible()) {
+            player.setTick(FAST_TICK);
+//            menu.getFasterButton().setVisible(false);
+//            menu.getFasterButtonLabel().setVisible(false);
+            mouseClick = false;
+        }
+//        else if(mouseClick && onClick == null) {
+//            for(int i = 0; i< menu.getTurretShop().size(); i++) {
+//                if(menu.getTurretShop().get(i).getBase().contains(mouseX, mouseY)||menu.getTurretShop().get(i).getCanon().contains(mouseX, mouseY)) {
+//                    if(player.getMoney()>=menu.getTurretShop().get(i).getCost()) {
+//                        onClick = new Turret(menu.getTurretShop().get(i).getType(), mouseX, mouseY);
+//                        add(menu.getCancel());
+//                    }
+//                }
+//            }
+//            mouseClick = false;
+//        }
+//        else {
+//            mouseClick = false;
+//        }
     }
 }
 
