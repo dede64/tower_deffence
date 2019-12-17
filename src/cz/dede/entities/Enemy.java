@@ -1,4 +1,4 @@
-package cz.dede.Entities;
+package cz.dede.entities;
 
 import acm.graphics.GPolygon;
 import acm.graphics.GRect;

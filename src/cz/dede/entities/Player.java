@@ -1,4 +1,4 @@
-package cz.dede.Entities;
+package cz.dede.entities;
 
 import cz.dede.resources.TDConstants;
 

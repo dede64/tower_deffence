@@ -1,8 +1,6 @@
-package cz.dede.Entities;
+package cz.dede.entities;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import static cz.dede.Main.canvas;
 
@@ -14,7 +12,7 @@ public class SideMenuTurretDetail extends SideMenu {
 
         super(Color.lightGray, turret.getType().toUpperCase());
 
-        this.turret = new Turret(turret.getType(), canvas.getWidth() - SIDE_MENU_WIDTH/2, 100);
+        this.turret = Turret.makeTurret(turret.getType(), canvas.getWidth() - SIDE_MENU_WIDTH/2, 100);
     }
 
     @Override

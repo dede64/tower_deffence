@@ -1,4 +1,4 @@
-package cz.dede.Entities;
+package cz.dede.entities;
 
 import acm.graphics.GPolygon;
 import cz.dede.Main;
@@ -27,7 +27,7 @@ public class Bullet implements TDConstants {
         this.dmg = turret.getDmg();
         this.speed = turret.getBulletSpeed();
         this.bullet = createBullet();
-        this.demageRadius = turret.getDemageRadius();
+        this.demageRadius = turret.getDamageRadius();
     }
 
     /**

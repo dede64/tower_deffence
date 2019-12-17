@@ -4,8 +4,8 @@ import acm.graphics.*;
 import acm.program.*;
 import acm.util.MediaTools;
 import acm.util.RandomGenerator;
-import cz.dede.Entities.*;
-import cz.dede.Entities.Button;
+import cz.dede.entities.*;
+import cz.dede.entities.Button;
 import cz.dede.resources.TDConstants;
 
 import java.applet.AudioClip;
@@ -442,7 +442,7 @@ public class Main extends GraphicsProgram implements TDConstants {
         double currentX = mouseX;
         double currentY = mouseY;
         if(onClick != null && mouseRelease && placeAvailable(currentX, currentY, turrets)) {
-            turrets.add(new Turret(onClick.getType(), currentX-currentX%40+20, currentY-currentY%40+20));
+            turrets.add(Turret.makeTurret(onClick.getType(), currentX-currentX%40+20, currentY-currentY%40+20));
             for (Turret turret : turrets) turret.getCanon().sendToFront();
             mouseRelease = false;
             remove(onClick.getBase());
@@ -645,7 +645,7 @@ public class Main extends GraphicsProgram implements TDConstants {
                         turrets.remove(tTop);
                         turrets.remove(tCorner);
                         turrets.remove(tRight);
-                        Turret bonus = new Turret("bonus", x + 20, y - 20);
+                        Turret bonus = Turret.makeTurret("bonus", x + 20, y - 20);
                         turrets.add(bonus);
                         for (Turret turret1 : turrets) {
                             turret1.getCanon().sendToFront();
@@ -712,7 +712,7 @@ public class Main extends GraphicsProgram implements TDConstants {
 
             if(obj instanceof Turret && sideMenuShop.getTurretShop().contains(obj)){
                 if(player.getMoney() >= ((Turret) obj).getCost()){
-                    onClick = new Turret(((Turret) obj).getType(), mouseX, mouseY);
+                    onClick = Turret.makeTurret(((Turret) obj).getType(), mouseX, mouseY);
                     add(sideMenuShop.getCancel());
                 }
                 mouseClick = false;

@@ -1,9 +1,8 @@
-package cz.dede.Entities;
+package cz.dede.entities;
 
 import acm.graphics.GLabel;
 import acm.graphics.GPolygon;
 import acm.graphics.GRect;
-import cz.dede.Main;
 import cz.dede.resources.TDConstants;
 
 import java.awt.*;
@@ -54,7 +53,7 @@ public class SideMenuShop extends SideMenu implements TDConstants {
      * method to create new shop item in side menu and labels for it
      */
     private void addTurret(String type, double x, double y) {
-        Turret turret = new Turret(type, x, y);
+        Turret turret = Turret.makeTurret(type, x, y);
         this.turretShop.add(turret);
         GLabel labelName = createLabel(x, y+35, "15");
         labelName.setLabel(turret.getType());
