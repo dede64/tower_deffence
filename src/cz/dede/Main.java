@@ -43,6 +43,7 @@ public class Main extends GraphicsProgram implements TDConstants {
 
     public void run() {
         canvas = getGCanvas();
+
         //initialization
         GImage background = new GImage("res/map.png", 0, 0);
         add(background);
