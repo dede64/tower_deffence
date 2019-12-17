@@ -422,7 +422,11 @@ public class Main extends GraphicsProgram implements TDConstants {
     private void changeScoreLabel(Player player, GLabel label, ArrayList<Integer> lastFps) {
         int sumOfAll = lastFps.stream().mapToInt(value -> value).sum();
         int averageFps = sumOfAll / lastFps.size();
-        label.setLabel("Money: " + (int) player.getMoney() + "$   Health: " + player.getLives() + "   Wave: " + (player.getWaveNumber() +1) + "   Score: " + player.getKilledEnemies() + " FPS: " + averageFps);
+        label.setLabel("Money: " + (int) player.getMoney() + "$   Health: " + player.getLives() + "   Wave: " + (player.getWaveNumber() +1) +
+                "   Score: " + player.getKilledEnemies() + " FPS: " + averageFps);
+        if(sideMenuTurretDetail != null){
+            sideMenuTurretDetail.update(player);
+        }
     }
 
 

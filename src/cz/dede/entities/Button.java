@@ -103,6 +103,11 @@ public class Button{
         }
     }
 
+    public void delete(){
+        canvas.remove(background);
+        canvas.remove(text);
+    }
+
     public boolean isVisible(){
         return background.isVisible();
     }
