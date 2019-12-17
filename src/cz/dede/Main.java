@@ -5,6 +5,7 @@ import acm.program.*;
 import acm.util.MediaTools;
 import acm.util.RandomGenerator;
 import cz.dede.Entities.*;
+import cz.dede.Entities.Button;
 import cz.dede.resources.TDConstants;
 import javafx.geometry.Side;
 
@@ -83,7 +84,6 @@ public class Main extends GraphicsProgram implements TDConstants {
             moveRangeIndicator(rangeIndicator, turrets, sideMenu);
             showShopInfo(sideMenu);
             changeScoreLabel(player, score, lastFps);
-            checkClick(sideMenu, player);
             moveOnClick();
             placeTurret(turrets, player, sideMenu);
             addEnemies(enemies, waves, waveCounter, pathX, pathY, player);
@@ -522,7 +522,7 @@ public class Main extends GraphicsProgram implements TDConstants {
         waves.add(getWave(THIRD_WAVE));
         waves.add(getWave(FORTH_WAVE));
         waves.add(getWave(FIFTH_WAVE));
-        for(int i = 0; i<50; i++) {
+        for(int i = 0; i<100; i++) {
             waves.add(getRandomWave());
         }
         return waves;
@@ -593,22 +593,20 @@ public class Main extends GraphicsProgram implements TDConstants {
      * method to hide start wave button if wave has been already started
      */
     private void hideWaveButton(SideMenu menu, ArrayList<Enemy> enemies, Player player) {
-        if(enemies.size() > 0 && menu.getButton().isVisible()) {
-            menu.getButton().setVisible(false);
-            menu.getNextWaveLabel().setVisible(false);
+        if(enemies.size() > 0 && menu.getNextWaveButton().getBackground().isVisible()) {
+            menu.getNextWaveButton().getBackground().setVisible(false);
+            menu.getNextWaveButton().getText().setVisible(false);
         }
-        else if(enemies.size() == 0 && !menu.getButton().isVisible() && !player.getStarted()) {
-            menu.getButton().setVisible(true);
-            menu.getNextWaveLabel().setVisible(true);
+        else if(enemies.size() == 0 && !menu.getNextWaveButton().getBackground().isVisible() && !player.getStarted()) {
+            menu.getNextWaveButton().getBackground().setVisible(true);
+            menu.getNextWaveButton().getText().setVisible(true);
             player.setTick(TICK);
         }
-        if(enemies.size() > 0 && !menu.getFasterButton().isVisible()) { // TODO it should be controlled by start wave or killed last enemy of wave not by number of enemies
-            menu.getFasterButton().setVisible(true);
-            menu.getFasterButtonLabel().setVisible(true);
+        if(enemies.size() > 0 && !menu.getFasterWaveButton().isVisible()) { // TODO it should be controlled by start wave or killed last enemy of wave not by number of enemies
+            menu.getFasterWaveButton().setVisible(true);
         }
-        else if(enemies.size() == 0 && menu.getFasterButton().isVisible() && !player.getStarted()) {
-            menu.getFasterButton().setVisible(false);
-            menu.getFasterButtonLabel().setVisible(false);
+        else if(enemies.size() == 0 && menu.getFasterWaveButton().isVisible() && !player.getStarted()) {
+            menu.getFasterWaveButton().setVisible(false);
         }
     }
 
@@ -677,6 +675,11 @@ public class Main extends GraphicsProgram implements TDConstants {
                 return turret;
             }
         }
+        for(Button button : sideMenu.getButtons()){
+            if(button.getBackground().equals(object) || button.getText().equals(object)){
+                return button;
+            }
+        }
         return null;
 
     }
@@ -703,39 +706,11 @@ public class Main extends GraphicsProgram implements TDConstants {
                 return;
             }
 
-
+            if(obj instanceof Button){
+                Button button = (Button) obj;
+                button.callback(player);
+            }
         }
-    }
-
-    /**
-     * method to grab item from shop, when clicked on it
-     * method to check start button, to start new vawe, if the last is killed
-     */
-    private void checkClick(SideMenu menu, Player player) {
-        if(!player.getStarted() && menu.getButton().contains(mouseX, mouseY) && mouseClick && menu.getButton().isVisible()) { //TODO create method button and movo to method processClicks
-            player.setStarted(true);
-            mouseClick = false;
-        }
-        else if(menu.getFasterButton().contains(mouseX, mouseY) && mouseClick && menu.getFasterButton().isVisible()) {
-            player.setTick(FAST_TICK);
-//            menu.getFasterButton().setVisible(false);
-//            menu.getFasterButtonLabel().setVisible(false);
-            mouseClick = false;
-        }
-//        else if(mouseClick && onClick == null) {
-//            for(int i = 0; i< menu.getTurretShop().size(); i++) {
-//                if(menu.getTurretShop().get(i).getBase().contains(mouseX, mouseY)||menu.getTurretShop().get(i).getCanon().contains(mouseX, mouseY)) {
-//                    if(player.getMoney()>=menu.getTurretShop().get(i).getCost()) {
-//                        onClick = new Turret(menu.getTurretShop().get(i).getType(), mouseX, mouseY);
-//                        add(menu.getCancel());
-//                    }
-//                }
-//            }
-//            mouseClick = false;
-//        }
-//        else {
-//            mouseClick = false;
-//        }
     }
 }
 
