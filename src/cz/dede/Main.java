@@ -7,15 +7,12 @@ import acm.util.RandomGenerator;
 import cz.dede.Entities.*;
 import cz.dede.Entities.Button;
 import cz.dede.resources.TDConstants;
-import javafx.geometry.Side;
 
 import java.applet.AudioClip;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
 
 import static java.lang.Thread.sleep;
 
@@ -29,6 +26,10 @@ public class Main extends GraphicsProgram implements TDConstants {
     private Turret onClick = null;
     public static GCanvas canvas;
     private GObject lastClicked = null;
+
+    private SideMenuTurretDetail sideMenuTurretDetail;
+
+
 
     /** A random number generator **/
     private RandomGenerator rg = new RandomGenerator();
@@ -53,13 +54,13 @@ public class Main extends GraphicsProgram implements TDConstants {
         ArrayList<Double> pathY = new ArrayList<>();
         createPath(pathX, pathY);
         GOval rangeIndicator = createIndicator();
-        SideMenu sideMenu = new SideMenu();
+        SideMenuShop sideMenuShop = new SideMenuShop();
         GLabel score = createLabel(5, 20, "20");
         ArrayList<Integer> lastFps = new ArrayList<>();
         lastFps.add(1);
 
         addMouseListeners();
-        colorShop(sideMenu, player);
+        colorShop(sideMenuShop, player);
 
         ArrayList<ArrayList<String>> waves = new ArrayList<ArrayList<String>>();
         waves = setWaves(waves);
@@ -78,18 +79,18 @@ public class Main extends GraphicsProgram implements TDConstants {
             rotateCanons(turrets, enemies);
             checkCollisions(bullets);
             shoot(turrets, bullets);
-            checkHealth(enemies, player, sideMenu);
+            checkHealth(enemies, player, sideMenuShop);
             healEnemies(enemies);
             moveHealthBars(enemies);
-            moveRangeIndicator(rangeIndicator, turrets, sideMenu);
-            showShopInfo(sideMenu);
+            moveRangeIndicator(rangeIndicator, turrets, sideMenuShop);
+            showShopInfo(sideMenuShop);
             changeScoreLabel(player, score, lastFps);
             moveOnClick();
-            placeTurret(turrets, player, sideMenu);
+            placeTurret(turrets, player, sideMenuShop);
             addEnemies(enemies, waves, waveCounter, pathX, pathY, player);
             checkPlayerLives(player);
-            hideWaveButton(sideMenu, enemies, player);
-            processClicks(sideMenu, turrets, player);
+            hideWaveButton(sideMenuShop, enemies, player);
+            processClicks(sideMenuShop, turrets, player);
 
             waveCounter += 1;
 
@@ -252,7 +253,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to check if enemies health isn't below zero -> death
      */
-    private void checkHealth(ArrayList<Enemy> enemies, Player player, SideMenu sideMenu) {
+    private void checkHealth(ArrayList<Enemy> enemies, Player player, SideMenuShop sideMenuShop) {
         for(int e = enemies.size()-1; e>=0; e--) {
             Enemy enemy = enemies.get(e);
             if(enemy.getHealth()<=0) {
@@ -265,7 +266,7 @@ public class Main extends GraphicsProgram implements TDConstants {
                 player.setMoney(player.getMoney() + enemy.getAward() * player.getMoneyBonus());
                 player.setKilledEnemies(player.getKilledEnemies() + 1);
                 enemies.remove(e);
-                colorShop(sideMenu, player);
+                colorShop(sideMenuShop, player);
             }
         }
     }
@@ -341,7 +342,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to move range indicator if is turret under mouse also when mouse drag a shop turret
      */
-    private void moveRangeIndicator(GOval ri, ArrayList<Turret> turrets, SideMenu menu) {
+    private void moveRangeIndicator(GOval ri, ArrayList<Turret> turrets, SideMenuShop menu) {
         boolean successHover = false;
         for (Turret turret : turrets) { //TODO use method getElementAt
             if (turret.getBase().contains(mouseX, mouseY) || turret.getCanon().contains(mouseX, mouseY)) {
@@ -370,7 +371,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to show shop info label when hover on item in shop
      */
-    private void showShopInfo(SideMenu menu) {
+    private void showShopInfo(SideMenuShop menu) {
         if (onClick == null) {
             for(Turret turret : menu.getTurretShop()) {//TODO use method getElementAt
                 if ((turret.getBase().contains(mouseX, mouseY)||turret.getCanon().contains(mouseX, mouseY))&& turret.getCanon().isVisible() ){
@@ -436,7 +437,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to release turret on the play field
      */
-    private void placeTurret(ArrayList<Turret> turrets, Player player, SideMenu menu) {
+    private void placeTurret(ArrayList<Turret> turrets, Player player, SideMenuShop menu) {
         double currentX = mouseX;
         double currentY = mouseY;
         if(onClick != null && mouseRelease && placeAvailable(currentX, currentY, turrets)) {
@@ -459,7 +460,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to color shop items by their availability
      */
-    private void colorShop(SideMenu menu, Player player) {
+    private void colorShop(SideMenuShop menu, Player player) {
         for(int i = 0; i < menu.getTurretShop().size(); i++) {
             Turret turret = menu.getTurretShop().get(i);
             if(turret.getCost() > player.getMoney()) {
@@ -592,8 +593,8 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to hide start wave button if wave has been already started
      */
-    private void hideWaveButton(SideMenu menu, ArrayList<Enemy> enemies, Player player) {
-        if(enemies.size() > 0 && menu.getNextWaveButton().getBackground().isVisible()) {
+    private void hideWaveButton(SideMenuShop menu, ArrayList<Enemy> enemies, Player player) {
+        if(enemies.size() > 0 && menu.getNextWaveButton().getBackground().isVisible()) { //TODO not check it by this GObject propertu, its broken, when button is hidden.
             menu.getNextWaveButton().getBackground().setVisible(false);
             menu.getNextWaveButton().getText().setVisible(false);
         }
@@ -664,18 +665,18 @@ public class Main extends GraphicsProgram implements TDConstants {
         remove(turret.getCanon());
     }
 
-    public Object getObject(GObject object, ArrayList<Turret> turrets, SideMenu sideMenu){ // TODO it should handle all events which uses mouse click event
+    public Object getObject(GObject object, ArrayList<Turret> turrets, SideMenuShop sideMenuShop){ // TODO it should handle all events which uses mouse click event
         for(Turret turret: turrets){
             if(turret.getCanon().equals(object) || turret.getBase().equals(object)){
                 return turret;
             }
         }
-        for(Turret turret : sideMenu.getTurretShop()){
+        for(Turret turret : sideMenuShop.getTurretShop()){
             if(turret.getCanon().equals(object) || turret.getBase().equals(object)){
                 return turret;
             }
         }
-        for(Button button : sideMenu.getButtons()){
+        for(Button button : sideMenuShop.getButtons()){
             if(button.getBackground().equals(object) || button.getText().equals(object)){
                 return button;
             }
@@ -684,23 +685,34 @@ public class Main extends GraphicsProgram implements TDConstants {
 
     }
 
-    private void processClicks(SideMenu sideMenu, ArrayList<Turret> turrets, Player player){
+    private void processClicks(SideMenuShop sideMenuShop, ArrayList<Turret> turrets, Player player){
         if(lastClicked != null){
-            Object obj = getObject(lastClicked, turrets, sideMenu);
+            Object obj = getObject(lastClicked, turrets, sideMenuShop);
             lastClicked = null;
 
             if (obj instanceof Turret && turrets.contains(obj)){
-                sideMenu.hideShop();
+                sideMenuShop.hideMenu();
+
+                if(sideMenuTurretDetail != null){
+                    sideMenuTurretDetail.delete();
+                    sideMenuTurretDetail = null;
+                }
+                sideMenuTurretDetail = new SideMenuTurretDetail((Turret) obj);
+
                 mouseClick = false;
                 return;
-            }else{
-                sideMenu.showShop();
             }
 
-            if(obj instanceof Turret && sideMenu.getTurretShop().contains(obj)){
+            if(sideMenuTurretDetail != null){
+                sideMenuTurretDetail.delete();
+                sideMenuTurretDetail = null; // TODO make sure all GObjects are deleted before deleting the object, also on other places
+            }
+            sideMenuShop.showMenu();
+
+            if(obj instanceof Turret && sideMenuShop.getTurretShop().contains(obj)){
                 if(player.getMoney() >= ((Turret) obj).getCost()){
                     onClick = new Turret(((Turret) obj).getType(), mouseX, mouseY);
-                    add(sideMenu.getCancel());
+                    add(sideMenuShop.getCancel());
                 }
                 mouseClick = false;
                 return;
