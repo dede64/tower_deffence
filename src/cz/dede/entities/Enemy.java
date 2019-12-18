@@ -4,6 +4,7 @@ import acm.graphics.GPolygon;
 import acm.graphics.GRect;
 import acm.util.RandomGenerator;
 import cz.dede.Main;
+import cz.dede.entities.enemies.*;
 import cz.dede.resources.TDConstants;
 
 import java.awt.*;
@@ -15,28 +16,28 @@ import static cz.dede.Main.canvas;
  * Class of Enemy object
  * */
 public class Enemy implements TDConstants {
-    private double speed;
-    private double maxHealth;
-    private double health;
-    private String type;
-    private int award;
-    private int healing;
-    private double x;
-    private double y;
-    private double lastRotation = 0;
-    private GPolygon vehicle;
-    private GRect greenHealth;
-    private GRect redHealth;
-    private ArrayList<Double> pathX;
-    private ArrayList<Double> pathY;
-    private double[] xCoordinates;
-    private double[] yCoordinates;
-    private String movement;
-    private int wave;
+    protected double speed;
+    protected double maxHealth;
+    protected double health;
+    protected String type;
+    protected int award;
+    protected int healing;
+    protected double x;
+    protected double y;
+    protected double lastRotation = 0;
+    protected GPolygon vehicle;
+    protected GRect greenHealth;
+    protected GRect redHealth;
+    protected ArrayList<Double> pathX;
+    protected ArrayList<Double> pathY;
+    protected double[] xCoordinates;
+    protected double[] yCoordinates;
+    protected String movement;
+    protected int wave;
 
     //constructor
-    public Enemy(String type, ArrayList<Double> pathX, ArrayList<Double> pathY, int vawe_number) {
-        this.wave = vawe_number;
+    public Enemy(String type, ArrayList<Double> pathX, ArrayList<Double> pathY, int wave_number) {
+        this.wave = wave_number;
         this.pathX = copyArrayList(pathX);
         this.pathY = copyArrayList(pathY);
         this.type = type;
@@ -46,109 +47,25 @@ public class Enemy implements TDConstants {
         this.pathY.remove(0);
         this.movement = "ground";
         makeHealthBar();
-        if(this.type.equals("puncher")) {
-            makePuncher();
-        }
-        if(this.type.equals("puncher_speeder")) {
-            makePuncherSpeeder();
-        }
-        if(this.type.equals("puncher_healer")) {
-            makePuncherHealer();
-        }
-        if(this.type.equals("flyer")) {
-            makeFlyer();
-        }
-        if(this.type.equals("briger")) {
-            makeBriger();
-        }
     }
 
-    /**
-     * create puncher Enemy
-     */
-    public void makePuncher() {
-        this.speed = PUNCHER_SPEED;
-        this.type = "puncher";
-        this.maxHealth = PUNCHER_HEALTH + PUNCHER_HEALTH*this.wave*WAVE_HEALTH_CONSTANT;
-        this.health = this.maxHealth;
-        this.award = PUNCHER_AWARD;
-        this.healing = PUNCHER_HEALING;
-        this.xCoordinates = PUNCHER_X;
-        this.yCoordinates = PUNCHER_Y;
-        this.vehicle = createVehicle(Color.BLUE, this.xCoordinates, this.yCoordinates);
-    }
-
-    /**
-     * create puncher speeder Enemy
-     */
-    public void makePuncherSpeeder() {
-        this.speed = PUNCHER_SPEEDER_SPEED;
-        this.type = "puncher_speeder";
-        this.maxHealth = PUNCHER_SPEEDER_HEALTH+ PUNCHER_SPEEDER_HEALTH*this.wave*WAVE_HEALTH_CONSTANT;
-        this.health = this.maxHealth;
-        this.award = PUNCHER_SPEEDER_AWARD;
-        this.healing = PUNCHER_SPEEDER_HEALING;
-        this.xCoordinates = PUNCHER_X;
-        this.yCoordinates = PUNCHER_Y;
-        Color color = new Color(20, 20, 160);
-        this.vehicle = createVehicle(color, this.xCoordinates, this.yCoordinates);
-    }
-
-    /**
-     * create puncher healer Enemy
-     */
-    public void makePuncherHealer() {
-        this.speed = PUNCHER_HEALER_SPEED;
-        this.type = "puncher_healer";
-        this.maxHealth = PUNCHER_HEALER_HEALTH + PUNCHER_HEALER_HEALTH*this.wave*WAVE_HEALTH_CONSTANT;
-        this.health = this.maxHealth;
-        this.award = PUNCHER_HEALER_AWARD;
-        this.healing = PUNCHER_HEALER_HEALING;
-        this.xCoordinates = PUNCHER_X;
-        this.yCoordinates = PUNCHER_Y;
-        Color color = new Color(20, 160, 20);
-        this.vehicle = createVehicle(color, this.xCoordinates, this.yCoordinates);
-    }
-
-    /**
-     * create puncher briger Enemy
-     */
-    public void makeBriger() {
-        this.speed = BRIGER_SPEED;
-        this.type = "briger";
-        this.maxHealth = BRIGER_HEALTH + BRIGER_HEALTH*this.wave*WAVE_HEALTH_CONSTANT;
-        this.health = this.maxHealth;
-        this.award = BRIGER_AWARD;
-        this.healing = BRIGER_HEALING;
-        this.xCoordinates = BRIGER_X;
-        this.yCoordinates = BRIGER_Y;
-        this.vehicle = createVehicle(Color.BLACK, this.xCoordinates, this.yCoordinates);
-    }
-
-    /**
-     * create flyer Enemy
-     */
-    public void makeFlyer() {
-        RandomGenerator rg = new RandomGenerator();
-        this.speed = FLYER_SPEED;
-        this.type = "flyer";
-        this.maxHealth = FLYER_HEALTH;
-        this.health = this.maxHealth;
-        this.award = FLYER_AWARD;
-        this.healing = FLYER_HEALING;
-        this.xCoordinates = FLYER_X;
-        this.yCoordinates = FLYER_Y;
-        this.movement = "air";
-        this.pathX = new ArrayList<Double>();
-        double x = rg.nextDouble(100, canvas.getWidth()-SIDE_MENU_WIDTH-100);
-        this.pathX.add(x); this.pathX.add(x);
-        this.pathY = new ArrayList<Double>();
-        this.pathY.add((canvas.getHeight()+20.0));	this.pathY.add(-10.0);
-        this.x = this.pathX.get(0);
-        this.y = this.pathY.get(0);
-        this.pathX.remove(0);
-        this.pathY.remove(0);
-        this.vehicle = createVehicle(Color.BLUE, this.xCoordinates, this.yCoordinates);
+    public static Enemy createEnemy(String type, ArrayList<Double> pathX, ArrayList<Double> pathY, int wave_number){
+        if(type.equals("puncher")) {
+            return new Puncher(type, pathX, pathY, wave_number);
+        }
+        if(type.equals("puncher_speeder")) {
+            return new PuncherSpeeder(type, pathX, pathY, wave_number);
+        }
+        if(type.equals("puncher_healer")) {
+            return new PuncherHealer(type, pathX, pathY, wave_number);
+        }
+        if(type.equals("flyer")) {
+            return new Flyer(type, pathX, pathY, wave_number);
+        }
+        if(type.equals("briger")) {
+            return new Briger(type, pathX, pathY, wave_number);
+        }
+        return null;
     }
 
     /**

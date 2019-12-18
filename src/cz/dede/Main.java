@@ -544,7 +544,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     private void addEnemies(ArrayList<Enemy> enemies, ArrayList<ArrayList<String>> waves, int counter, ArrayList<Double> pathX, ArrayList<Double> pathY, Player player) {
         if(counter%WAVE_SPACING==0 && waves.size()>0 && player.getStarted()) {
             ArrayList<String> wave = waves.get(0);
-            enemies.add(new Enemy(wave.get(0), pathX, pathY, player.getWaveNumber()));
+            enemies.add(Enemy.createEnemy(wave.get(0), pathX, pathY, player.getWaveNumber()));
             double randomBoost = rg.nextDouble(0, WAVE_RANDOM_MUTATION);
             Enemy enemy = enemies.get(enemies.size()-1);
             if(randomBoost < 1 && player.getWaveNumber() > WAVE_RANDOM_MUTATION_FIRST_WAVE && enemy.getMovement().equals("ground")) {

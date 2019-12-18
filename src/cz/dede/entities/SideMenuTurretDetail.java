@@ -74,7 +74,7 @@ public class SideMenuTurretDetail extends SideMenu {
             this.turret.setCost((int) (this.turret.getCost() * 1.4));
             this.confirm.getText().setLabel(turret.getCost() / 2 + "$");
             this.turret.getBase().setColor(this.turret.getBase().getColor().darker());
-            this.update(player);//TODO change positions of upgrade labels after upgrade
+            this.update(player);
 
         }
     }
