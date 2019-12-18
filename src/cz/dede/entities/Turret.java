@@ -18,8 +18,8 @@ public class Turret implements TDConstants {
     protected String targetType;
     protected double range;
     protected double dmg;
-    protected int reloadTime;
-    protected int currentLoad;
+    protected double reloadTime;
+    protected double currentLoad;
     protected double bulletSpeed;
     protected double x;
     protected double y;
@@ -132,19 +132,19 @@ public class Turret implements TDConstants {
         this.dmg = dmg;
     }
 
-    public int getReloadTime() {
+    public double getReloadTime() {
         return reloadTime;
     }
 
-    public void setReloadTime(int reloadTime) {
+    public void setReloadTime(double reloadTime) {
         this.reloadTime = reloadTime;
     }
 
-    public int getCurrentLoad() {
+    public double getCurrentLoad() {
         return currentLoad;
     }
 
-    public void setCurrentLoad(int currentLoad) {
+    public void setCurrentLoad(double currentLoad) {
         this.currentLoad = currentLoad;
     }
 

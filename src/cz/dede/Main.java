@@ -318,7 +318,6 @@ public class Main extends GraphicsProgram implements TDConstants {
     public void mousePressed(MouseEvent e) {
         mouseX = e.getX();
         mouseY = e.getY();
-        mouseClick = true;
 
         lastClicked = getElementAt(new GPoint(e.getPoint()));
 
@@ -703,6 +702,7 @@ public class Main extends GraphicsProgram implements TDConstants {
 
             if(obj instanceof  Button && sideMenuTurretDetail != null && sideMenuTurretDetail.getConfirm() == obj){
                 sideMenuTurretDetail.buy(player);
+                colorShop(sideMenuShop, player);
                 return;
             }
 
@@ -714,8 +714,6 @@ public class Main extends GraphicsProgram implements TDConstants {
                     sideMenuTurretDetail = null;
                 }
                 sideMenuTurretDetail = new SideMenuTurretDetail((Turret) obj);
-
-                mouseClick = false;
                 return;
             }
 
@@ -730,7 +728,6 @@ public class Main extends GraphicsProgram implements TDConstants {
                     onClick = Turret.makeTurret(((Turret) obj).getType(), mouseX, mouseY);
                     add(sideMenuShop.getCancel());
                 }
-                mouseClick = false;
                 return;
             }
 

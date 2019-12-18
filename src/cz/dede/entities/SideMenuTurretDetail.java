@@ -62,15 +62,19 @@ public class SideMenuTurretDetail extends SideMenu {
 
             turret.setDmg(turret.getDmg() * 1.2);
             turret.setRange(turret.getRange() * 1.2);
+            turret.setReloadTime(turret.getReloadTime() * 0.9);
 
             this.turretDMGInfo.setLabel(getDMGInfo());
+            this.turretDMGInfo.setLocation(canvas.getWidth() - SIDE_MENU_WIDTH/2.0 - this.turretDMGInfo.getWidth() / 2.0, 180);
             this.turretRangeInfo.setLabel(getRangeInfo());
+            this.turretRangeInfo.setLocation(canvas.getWidth() - SIDE_MENU_WIDTH/2.0 - this.turretRangeInfo.getWidth() / 2.0, 230);
             this.turretAttackSpeedInfo.setLabel(getReloadInfo());
+            this.turretAttackSpeedInfo.setLocation(canvas.getWidth() - SIDE_MENU_WIDTH/2.0 - this.turretAttackSpeedInfo.getWidth() / 2.0, 280);
 
-            this.turret.setCost((int) (this.turret.getCost() * 1.2));
+            this.turret.setCost((int) (this.turret.getCost() * 1.4));
             this.confirm.getText().setLabel(turret.getCost() / 2 + "$");
             this.turret.getBase().setColor(this.turret.getBase().getColor().darker());
-            this.update(player);//TODO change positions of upgrade labels
+            this.update(player);//TODO change positions of upgrade labels after upgrade
 
         }
     }
@@ -84,7 +88,7 @@ public class SideMenuTurretDetail extends SideMenu {
     }
 
     private String getReloadInfo(){
-        return String.format("Reload: %.3fs (-%.3fs)", TICK / 1000.0 * turret.getReloadTime(), TICK / 1000.0 * 0.2 * turret.getReloadTime());
+        return String.format("Reload: %.3fs (-%.3fs)", TICK / 1000.0 * turret.getReloadTime(), TICK / 1000.0 * 0.1 * turret.getReloadTime());
     }
 
     @Override
