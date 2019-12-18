@@ -23,7 +23,7 @@ public class Knocker extends Turret {
         Color color = new Color(150,150,150);
         this.base = createBase(color, this.xBaseCoordinates, this.yBaseCoordinates);
         this.canon = createCanon(Color.BLUE, this.xCanonCoordinates, this.yCanonCoordinates);
-        this.damageRadius = DEMAGE_RADIUS;
+        this.damageRadius = DAMAGE_RADIUS;
         this.currentLoad = this.reloadTime;
     }
 }

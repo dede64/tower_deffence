@@ -21,7 +21,7 @@ public class Dome extends Turret {
         this.yCanonCoordinates = DESTROYER_CANON_Y;
         this.base = createBase(new Color(60, 60, 150), this.xBaseCoordinates, this.yBaseCoordinates);
         this.canon = createCanon(Color.BLACK, this.xCanonCoordinates, this.yCanonCoordinates);
-        this.damageRadius = DEMAGE_RADIUS;
+        this.damageRadius = DAMAGE_RADIUS;
         this.currentLoad = this.reloadTime;
     }
 }

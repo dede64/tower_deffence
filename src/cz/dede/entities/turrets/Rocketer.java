@@ -22,7 +22,7 @@ public class Rocketer extends Turret {
         this.yCanonCoordinates = ROCKET_CANON_Y;
         this.base = createBase(Color.DARK_GRAY, this.xBaseCoordinates, this.yBaseCoordinates);
         this.canon = createCanon(Color.BLACK, this.xCanonCoordinates, this.yCanonCoordinates);
-        this.damageRadius = DEMAGE_RADIUS;
+        this.damageRadius = DAMAGE_RADIUS;
         this.currentLoad = this.reloadTime;
     }
 }

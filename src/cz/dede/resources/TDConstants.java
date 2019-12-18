@@ -7,7 +7,7 @@ public interface TDConstants {
      * but in later calculations you should use getWidth() and getHeight()
      * rather than these constants for accurate size information.
      */
-    public static final int APPLICATION_WIDTH = 1400;
+    public static final int APPLICATION_WIDTH = 1450;
     public static final int APPLICATION_HEIGHT = 800;
 
     /**
@@ -52,7 +52,7 @@ public interface TDConstants {
     public static final double[] SNIPER_CANON_Y = {-40, -40, -10, -10, 10, 10, -10, -10, -40, -40};
 
 
-    public static final double DEMAGE_RADIUS = 5;
+    public static final double DAMAGE_RADIUS = 5;
 
     /**
      * Constants of knocker turret
@@ -168,7 +168,7 @@ public interface TDConstants {
     /**
      * Constants of side menu
      */
-    public static final int SIDE_MENU_WIDTH = 160;
+    public static final int SIDE_MENU_WIDTH = 210;
     public static final int INFO_BOX_WIDTH = 240;
     public static final int INFO_BOX_HEIGHT = 100;
     public static final double[] INFO_BOX_Y = {0, 10, 50, 50, -50, -50, -10, 0};

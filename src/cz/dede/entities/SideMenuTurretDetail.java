@@ -12,8 +12,9 @@ public class SideMenuTurretDetail extends SideMenu {
     private Turret turret;
     private GLabel turretDMGInfo;
     private GLabel turretRangeInfo;
+    private GLabel turretAttackSpeedInfo;
     private Button confirm;
-    private boolean isAvailable = false; // TODO add attack speed (Each turret should have own uprade pattern)
+    private boolean isAvailable = false; // TODO (Each turret should have own uprade pattern)
 
     public SideMenuTurretDetail(Turret turret) {
 
@@ -23,16 +24,21 @@ public class SideMenuTurretDetail extends SideMenu {
         this.turret = turret;
 
         this.turretDMGInfo = createLabel(canvas.getWidth() - SIDE_MENU_WIDTH , 150, "16");
-        this.turretDMGInfo.setLabel("DMG: " + turret.getDmg() + " (+" + 0.2 * turret.getDmg() + ")");
+        this.turretDMGInfo.setLabel(getDMGInfo());
         this.turretDMGInfo.setColor(Color.BLACK);
-        this.turretDMGInfo.setLocation(canvas.getWidth() - SIDE_MENU_WIDTH/2.0 - this.turretDMGInfo.getWidth() / 2.0, 150);
+        this.turretDMGInfo.setLocation(canvas.getWidth() - SIDE_MENU_WIDTH/2.0 - this.turretDMGInfo.getWidth() / 2.0, 180);
 
         this.turretRangeInfo = createLabel(canvas.getWidth() - SIDE_MENU_WIDTH , 200, "16");
-        this.turretRangeInfo.setLabel("Range: " + turret.getRange() + "m (+" + 0.2 * turret.getRange() + "m)");
+        this.turretRangeInfo.setLabel(getRangeInfo());
         this.turretRangeInfo.setColor(Color.BLACK);
-        this.turretRangeInfo.setLocation(canvas.getWidth() - SIDE_MENU_WIDTH/2.0 - this.turretRangeInfo.getWidth() / 2.0, 200);
+        this.turretRangeInfo.setLocation(canvas.getWidth() - SIDE_MENU_WIDTH/2.0 - this.turretRangeInfo.getWidth() / 2.0, 230);
 
-        this.confirm = new Button((turret.getCost() / 2) + "$", canvas.getWidth() - SIDE_MENU_WIDTH + 40, 250, SIDE_MENU_WIDTH - 80, 30, Color.RED);
+        this.turretAttackSpeedInfo = createLabel(canvas.getWidth() - SIDE_MENU_WIDTH , 200, "16");
+        this.turretAttackSpeedInfo.setLabel(getReloadInfo());
+        this.turretAttackSpeedInfo.setColor(Color.BLACK);
+        this.turretAttackSpeedInfo.setLocation(canvas.getWidth() - SIDE_MENU_WIDTH/2.0 - this.turretAttackSpeedInfo.getWidth() / 2.0, 280);
+
+        this.confirm = new Button((turret.getCost() / 2) + "$", canvas.getWidth() - SIDE_MENU_WIDTH + 40, 310, SIDE_MENU_WIDTH - 80, 30, Color.RED);
         this.getButtons().add(this.confirm);
     }
 
@@ -57,14 +63,28 @@ public class SideMenuTurretDetail extends SideMenu {
             turret.setDmg(turret.getDmg() * 1.2);
             turret.setRange(turret.getRange() * 1.2);
 
-            this.turretDMGInfo.setLabel("DMG: " + turret.getDmg() + " (+" + 0.2 * turret.getDmg() + ")");// TODO create function which updates turret info
-            this.turretRangeInfo.setLabel("Range: " + turret.getRange() + "m (+" + 0.2 * turret.getRange() + "m)");
+            this.turretDMGInfo.setLabel(getDMGInfo());
+            this.turretRangeInfo.setLabel(getRangeInfo());
+            this.turretAttackSpeedInfo.setLabel(getReloadInfo());
 
             this.turret.setCost((int) (this.turret.getCost() * 1.2));
             this.confirm.getText().setLabel(turret.getCost() / 2 + "$");
-            this.update(player);
+            this.turret.getBase().setColor(this.turret.getBase().getColor().darker());
+            this.update(player);//TODO change positions of upgrade labels
 
         }
+    }
+
+    private String getDMGInfo(){
+        return String.format("DMG: %.1f (+%.1f)", turret.getDmg(), turret.getDmg() * 0.2);
+    }
+
+    private String getRangeInfo(){
+        return String.format("Range: %.0fm (+%.0fm)", turret.getRange(), turret.getRange() * 0.2);
+    }
+
+    private String getReloadInfo(){
+        return String.format("Reload: %.3fs (-%.3fs)", TICK / 1000.0 * turret.getReloadTime(), TICK / 1000.0 * 0.2 * turret.getReloadTime());
     }
 
     @Override
@@ -78,6 +98,7 @@ public class SideMenuTurretDetail extends SideMenu {
             this.turretSprite.getCanon().setVisible(false);
             this.turretRangeInfo.setVisible(false);
             this.turretDMGInfo.setVisible(false);
+            this.turretAttackSpeedInfo.setVisible(false);
             confirm.setVisible(false);
         }
     }
@@ -91,6 +112,7 @@ public class SideMenuTurretDetail extends SideMenu {
         canvas.remove(this.turretSprite.getCanon());
         canvas.remove(this.turretDMGInfo);
         canvas.remove(this.turretRangeInfo);
+        canvas.remove(this.turretAttackSpeedInfo);
         confirm.delete();
         this.getButtons().remove(confirm);
     }
@@ -106,6 +128,7 @@ public class SideMenuTurretDetail extends SideMenu {
             this.turretSprite.getCanon().setVisible(true);
             this.turretRangeInfo.setVisible(true);
             this.turretDMGInfo.setVisible(true);
+            this.turretAttackSpeedInfo.setVisible(true);
             confirm.setVisible(true);
         }
     }

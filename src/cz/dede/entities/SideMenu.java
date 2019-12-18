@@ -32,7 +32,7 @@ public abstract class SideMenu implements TDConstants {
         this.background = new GRect(SIDE_MENU_WIDTH, canvas.getHeight());
         this.background.setFilled(true);
         this.background.setColor(color);
-        canvas.add(this.background, canvas.getWidth()-160, 0);
+        canvas.add(this.background, canvas.getWidth()-SIDE_MENU_WIDTH, 0);
     }
 
     private void createTitle(String title){

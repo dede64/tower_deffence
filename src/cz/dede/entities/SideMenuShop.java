@@ -40,7 +40,6 @@ public class SideMenuShop extends SideMenu implements TDConstants {
         this.fasterWaveButton = new Button("Faster", canvas.getWidth()-SIDE_MENU_WIDTH+5, canvas.getHeight()-60, SIDE_MENU_WIDTH - 10, 30, Color.CYAN);
         this.fasterWaveButton.setVisible(false);
         this.fasterWaveButton.setButtonEventListener((Player player)->{
-            System.out.println("asfawfafaw");
             player.setTick(FAST_TICK);
         });
         this.getButtons().add(this.nextWaveButton);

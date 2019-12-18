@@ -43,6 +43,7 @@ public class Main extends GraphicsProgram implements TDConstants {
 
     public void run() {
         canvas = getGCanvas();
+        canvas.setAutoRepaintFlag(false);
 
         //initialization
         GImage background = new GImage("res/map.png", 0, 0);
@@ -94,6 +95,9 @@ public class Main extends GraphicsProgram implements TDConstants {
             processClicks(sideMenuShop, turrets, player);
 
             waveCounter += 1;
+
+
+            canvas.repaint();
 
 
             // Measuring time for compensating computation losses. //TODO move to function
