@@ -13,7 +13,7 @@ public class SideMenuTurretDetail extends SideMenu {
     private GLabel turretDMGInfo;
     private GLabel turretRangeInfo;
     private Button confirm;
-    private boolean isAvailable = false;
+    private boolean isAvailable = false; // TODO add attack speed (Each turret should have own uprade pattern)
 
     public SideMenuTurretDetail(Turret turret) {
 
@@ -33,6 +33,7 @@ public class SideMenuTurretDetail extends SideMenu {
         this.turretRangeInfo.setLocation(canvas.getWidth() - SIDE_MENU_WIDTH/2.0 - this.turretRangeInfo.getWidth() / 2.0, 200);
 
         this.confirm = new Button((turret.getCost() / 2) + "$", canvas.getWidth() - SIDE_MENU_WIDTH + 40, 250, SIDE_MENU_WIDTH - 80, 30, Color.RED);
+        this.getButtons().add(this.confirm);
     }
 
     public void update(Player player){
@@ -40,15 +41,29 @@ public class SideMenuTurretDetail extends SideMenu {
             if(!isAvailable){
                 isAvailable = true;
                 this.confirm.getBackground().setColor(Color.GREEN);
-//                this.confirm.setButtonEventListener((Player player)->{
-//                    player.setStarted(true);
-//                });
             }
         }else{
             if(isAvailable){
                 isAvailable = false;
                 this.confirm.getBackground().setColor(Color.RED);
             }
+        }
+    }
+
+    public void buy(Player player){
+        if(player.getMoney() >= turret.getCost() /2){
+            player.setMoney(player.getMoney() - turret.getCost() / 2.0);
+
+            turret.setDmg(turret.getDmg() * 1.2);
+            turret.setRange(turret.getRange() * 1.2);
+
+            this.turretDMGInfo.setLabel("DMG: " + turret.getDmg() + " (+" + 0.2 * turret.getDmg() + ")");// TODO create function which updates turret info
+            this.turretRangeInfo.setLabel("Range: " + turret.getRange() + "m (+" + 0.2 * turret.getRange() + "m)");
+
+            this.turret.setCost((int) (this.turret.getCost() * 1.2));
+            this.confirm.getText().setLabel(turret.getCost() / 2 + "$");
+            this.update(player);
+
         }
     }
 
@@ -77,6 +92,7 @@ public class SideMenuTurretDetail extends SideMenu {
         canvas.remove(this.turretDMGInfo);
         canvas.remove(this.turretRangeInfo);
         confirm.delete();
+        this.getButtons().remove(confirm);
     }
 
     @Override
@@ -92,5 +108,53 @@ public class SideMenuTurretDetail extends SideMenu {
             this.turretDMGInfo.setVisible(true);
             confirm.setVisible(true);
         }
+    }
+
+    public Turret getTurretSprite() {
+        return turretSprite;
+    }
+
+    public void setTurretSprite(Turret turretSprite) {
+        this.turretSprite = turretSprite;
+    }
+
+    public Turret getTurret() {
+        return turret;
+    }
+
+    public void setTurret(Turret turret) {
+        this.turret = turret;
+    }
+
+    public GLabel getTurretDMGInfo() {
+        return turretDMGInfo;
+    }
+
+    public void setTurretDMGInfo(GLabel turretDMGInfo) {
+        this.turretDMGInfo = turretDMGInfo;
+    }
+
+    public GLabel getTurretRangeInfo() {
+        return turretRangeInfo;
+    }
+
+    public void setTurretRangeInfo(GLabel turretRangeInfo) {
+        this.turretRangeInfo = turretRangeInfo;
+    }
+
+    public Button getConfirm() {
+        return confirm;
+    }
+
+    public void setConfirm(Button confirm) {
+        this.confirm = confirm;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
     }
 }

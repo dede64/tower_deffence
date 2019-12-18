@@ -227,7 +227,7 @@ public class Main extends GraphicsProgram implements TDConstants {
             double x_diff = bullet.getX() - bullet.getEnemy().getX();
             double y_diff = bullet.getY() - bullet.getEnemy().getY();
             double distance = Math.sqrt(Math.pow(x_diff, 2) + Math.pow(y_diff, 2));
-            if(distance<=bullet.getDemageRadius()) {
+            if(distance<=bullet.getDamageRadius()) {
                 bullet.getEnemy().substractHealth(bullet.getDmg());
                 GPolygon shape = bullet.getBullet();
                 remove(shape);
@@ -686,6 +686,8 @@ public class Main extends GraphicsProgram implements TDConstants {
                 return button;
             }
         }
+        if(sideMenuTurretDetail != null && (sideMenuTurretDetail.getConfirm().getBackground().equals(object) || sideMenuTurretDetail.getConfirm().getText().equals(object)))
+            return sideMenuTurretDetail.getConfirm();
         return null;
 
     }
@@ -694,6 +696,11 @@ public class Main extends GraphicsProgram implements TDConstants {
         if(lastClicked != null){
             Object obj = getObject(lastClicked, turrets, sideMenuShop);
             lastClicked = null;
+
+            if(obj instanceof  Button && sideMenuTurretDetail != null && sideMenuTurretDetail.getConfirm() == obj){
+                sideMenuTurretDetail.buy(player);
+                return;
+            }
 
             if (obj instanceof Turret && turrets.contains(obj)){
                 sideMenuShop.hideMenu();

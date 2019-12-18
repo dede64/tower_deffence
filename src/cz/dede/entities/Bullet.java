@@ -15,7 +15,7 @@ public class Bullet implements TDConstants {
     private double dmg;
     private double x;
     private double y;
-    private double demageRadius;
+    private double damageRadius;
     private double lastRotation = 0;
     private GPolygon bullet;
 
@@ -27,7 +27,7 @@ public class Bullet implements TDConstants {
         this.dmg = turret.getDmg();
         this.speed = turret.getBulletSpeed();
         this.bullet = createBullet();
-        this.demageRadius = turret.getDamageRadius();
+        this.damageRadius = turret.getDamageRadius();
     }
 
     /**
@@ -68,6 +68,10 @@ public class Bullet implements TDConstants {
         return enemy;
     }
 
+    public void delete(){
+        canvas.remove(this.bullet);
+    }
+
     public void setEnemy(Enemy enemy) {
         this.enemy = enemy;
     }
@@ -104,12 +108,12 @@ public class Bullet implements TDConstants {
         this.y = y;
     }
 
-    public double getDemageRadius() {
-        return demageRadius;
+    public double getDamageRadius() {
+        return damageRadius;
     }
 
-    public void setDemageRadius(double demageRadius) {
-        this.demageRadius = demageRadius;
+    public void setDamageRadius(double damageRadius) {
+        this.damageRadius = damageRadius;
     }
 
     public double getLastRotation() {
