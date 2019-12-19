@@ -23,5 +23,6 @@ public class Dome extends Turret {
         this.canon = createCanon(Color.BLACK, this.xCanonCoordinates, this.yCanonCoordinates);
         this.damageRadius = DAMAGE_RADIUS;
         this.currentLoad = this.reloadTime;
+        this.canonLength = 40;
     }
 }

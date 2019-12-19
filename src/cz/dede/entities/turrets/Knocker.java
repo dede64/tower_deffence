@@ -25,5 +25,6 @@ public class Knocker extends Turret {
         this.canon = createCanon(Color.BLUE, this.xCanonCoordinates, this.yCanonCoordinates);
         this.damageRadius = DAMAGE_RADIUS;
         this.currentLoad = this.reloadTime;
+        this.canonLength = 40;
     }
 }

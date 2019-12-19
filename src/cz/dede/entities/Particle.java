@@ -18,7 +18,7 @@ public class Particle {
     private Color color;
 
     public Particle(double x, double y, double xVelocity, double yVelocity, Color color, double duration) {
-        particle = new GOval(x, y, 6, 6);
+        particle = new GOval(x, y, 4, 4);
         particle.setFilled(true);
         particle.setFillColor(color);
         canvas.add(particle);

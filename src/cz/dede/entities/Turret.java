@@ -2,8 +2,11 @@ package cz.dede.entities;
 
 import acm.graphics.GPolygon;
 
+import acm.util.RandomGenerator;
+import cz.dede.Main;
 import cz.dede.entities.turrets.*;
 import cz.dede.resources.TDConstants;
+import javafx.util.Pair;
 
 
 import java.awt.*;
@@ -33,6 +36,7 @@ public class Turret implements TDConstants {
     protected double[] yBaseCoordinates;
     protected double[] xCanonCoordinates;
     protected double[] yCanonCoordinates;
+    protected double canonLength = 0;
 
     //constructor
     public Turret(String type, double x, double y) {
@@ -58,6 +62,16 @@ public class Turret implements TDConstants {
             default:
                 return null;
         }
+    }
+
+    public Pair<Double, Double> getCanonEnd(){
+        if (this.target == null){
+            return new Pair<>(this.x, this.y);
+        }
+        double angle = Main.getAngle(x, y, getTarget().getX(), getTarget().getY());
+        double xCoord = x - Math.sin(Math.toRadians(angle)) * canonLength;
+        double yCoord = y - Math.cos(Math.toRadians(angle)) * canonLength;
+        return new Pair<>(xCoord, yCoord);
     }
 
     /**

@@ -7,6 +7,7 @@ import acm.util.RandomGenerator;
 import cz.dede.entities.*;
 import cz.dede.entities.Button;
 import cz.dede.resources.TDConstants;
+import javafx.util.Pair;
 
 import java.applet.AudioClip;
 import java.awt.*;
@@ -260,8 +261,10 @@ public class Main extends GraphicsProgram implements TDConstants {
             if (turret.getCurrentLoad() < turret.getReloadTime()) {
                 turret.addReload();
             } else if (turret.getTarget() != null) {
-                bullets.add(new Bullet(turret.getTarget(), turret, turret.getX(), turret.getY()));
-                createParticles(particles, Color.YELLOW, 10, turret.getX(), turret.getY(), getAngle(turret.getX(), turret.getY(), turret.getTarget().getX(), turret.getTarget().getY()), 3, 20);
+                Pair<Double, Double> canonEnd = turret.getCanonEnd();
+                bullets.add(new Bullet(turret.getTarget(), turret, canonEnd.getKey(), canonEnd.getValue()));
+                createParticles(particles, new Color(0xFED766), 5, canonEnd.getKey(), canonEnd.getValue(),
+                        getAngle(canonEnd.getKey(), canonEnd.getValue(), turret.getTarget().getX(), turret.getTarget().getY()), 3, 20); // TODO each turret should have particle settings
                 turret.setCurrentLoad(0);
                 turret.getCanon().sendToFront();
 //				ShootClip.play(); // TODO just for fun, but its buggy
