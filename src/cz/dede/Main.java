@@ -21,7 +21,6 @@ public class Main extends GraphicsProgram implements TDConstants {
     //instance variables
     private double mouseX;
     private double mouseY;
-    private boolean mouseClick = false;
     private boolean mouseRelease = false;
     private Turret onClick = null;
     public static GCanvas canvas;
@@ -54,6 +53,7 @@ public class Main extends GraphicsProgram implements TDConstants {
         ArrayList<Bullet> bullets = new ArrayList<>();
         ArrayList<Double> pathX = new ArrayList<>();
         ArrayList<Double> pathY = new ArrayList<>();
+        ArrayList<Particle> particles = new ArrayList<>();
         createPath(pathX, pathY);
         GOval rangeIndicator = createIndicator();
         SideMenuShop sideMenuShop = new SideMenuShop();
@@ -78,9 +78,10 @@ public class Main extends GraphicsProgram implements TDConstants {
 
             moveEnemies(enemies, player);
             moveBullets(bullets);
+            updateParticles(particles);
             rotateCanons(turrets, enemies);
             checkCollisions(bullets);
-            shoot(turrets, bullets);
+            shoot(turrets, bullets, particles);
             checkHealth(enemies, player, sideMenuShop);
             healEnemies(enemies);
             moveHealthBars(enemies);
@@ -147,6 +148,17 @@ public class Main extends GraphicsProgram implements TDConstants {
             }
             else{
                 bullet.move();
+            }
+        }
+    }
+
+    private void updateParticles(ArrayList<Particle> particles){
+        for(int i = particles.size() -1 ; i >= 0; i--){
+            Particle particle = particles.get(i);
+            particle.update();
+            if (particle.getRemainingTime() < 0){
+                particle.delete();
+                particles.remove(particle);
             }
         }
     }
@@ -243,15 +255,30 @@ public class Main extends GraphicsProgram implements TDConstants {
     /**
      * method to shoot from turrets, when they are reloaded
      */
-    private void shoot(ArrayList<Turret> turrets, ArrayList<Bullet> bullets) {
+    private void shoot(ArrayList<Turret> turrets, ArrayList<Bullet> bullets, ArrayList<Particle> particles) {
         for (Turret turret : turrets) {
             if (turret.getCurrentLoad() < turret.getReloadTime()) {
                 turret.addReload();
             } else if (turret.getTarget() != null) {
                 bullets.add(new Bullet(turret.getTarget(), turret, turret.getX(), turret.getY()));
+                createParticles(particles, Color.YELLOW, 10, turret.getX(), turret.getY(), getAngle(turret.getX(), turret.getY(), turret.getTarget().getX(), turret.getTarget().getY()), 3, 20);
                 turret.setCurrentLoad(0);
+                turret.getCanon().sendToFront();
 //				ShootClip.play(); // TODO just for fun, but its buggy
             }
+        }
+    }
+
+    private void createParticles(ArrayList<Particle> particles, Color color, int count, double x, double y, double angle, double speed, double duration){
+        for (int i = 0; i < count; i++){
+            double angleDif = rg.nextDouble(-30, 30) + angle;
+            if(angleDif < 0){
+                angleDif += 360;
+            }
+            double ySpeed = -Math.cos(Math.toRadians(angleDif)) * speed;
+            double xSpeed = -Math.sin(Math.toRadians(angleDif)) * speed;
+            Particle particle = new Particle(x, y, xSpeed, ySpeed, color, duration);
+            particles.add(particle);
         }
     }
 
