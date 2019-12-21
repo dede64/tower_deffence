@@ -677,15 +677,17 @@ public class Main extends GraphicsProgram implements TDConstants {
                 }
                 if(tTop != null && tCorner != null & tRight != null) {
                     if(tTop.getType().equals("destroyer") && tCorner.getType().equals("destroyer") && tRight.getType().equals("destroyer")) {
-                        deleteTurret(turret);
-                        deleteTurret(tTop);
-                        deleteTurret(tCorner);
-                        deleteTurret(tRight);
+                        double investedMoney = turret.getInvestedMoney() + tTop.getInvestedMoney() + tCorner.getInvestedMoney() + tRight.getInvestedMoney();
+                        turret.delete();
+                        tTop.delete();
+                        tCorner.delete();
+                        tRight.delete();
                         turrets.remove(turret);
                         turrets.remove(tTop);
                         turrets.remove(tCorner);
                         turrets.remove(tRight);
                         Turret bonus = Turret.makeTurret("bonus", x + 20, y - 20);
+                        bonus.setInvestedMoney(investedMoney);
                         turrets.add(bonus);
                         for (Turret turret1 : turrets) {
                             turret1.getCanon().sendToFront();
@@ -698,13 +700,6 @@ public class Main extends GraphicsProgram implements TDConstants {
         }
     }
 
-    /**
-     * method to delete turret shape from screen
-     */
-    private void deleteTurret(Turret turret) {
-        remove(turret.getBase());
-        remove(turret.getCanon());
-    }
 
     public Object getObject(GObject object, ArrayList<Turret> turrets, SideMenuShop sideMenuShop){ // TODO it should handle all events which uses mouse click event
         for(Turret turret: turrets){
@@ -746,8 +741,11 @@ public class Main extends GraphicsProgram implements TDConstants {
                 }
                 else if(sideMenuTurretDetail.getSell() == obj){
                     Turret turret = sideMenuTurretDetail.getTurret();
+                    if(turret.getType().equals("bonus")){
+                        player.setMoneyBonus(player.getMoneyBonus() - BONUS_MONEY);
+                    }
                     turrets.remove(turret);
-                    player.setMoney(player.getMoney() + turret.getCost()); //TODO make function which makes sell value.
+                    player.setMoney(player.getMoney() + turret.getSellValue());
                     turret.delete();
                     sideMenuTurretDetail.delete();
                     sideMenuTurretDetail = null;

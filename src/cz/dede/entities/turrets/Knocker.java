@@ -26,5 +26,6 @@ public class Knocker extends Turret {
         this.damageRadius = DAMAGE_RADIUS;
         this.currentLoad = this.reloadTime;
         this.canonLength = 40;
+        this.investedMoney = this.cost;
     }
 }

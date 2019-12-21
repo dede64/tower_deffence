@@ -37,6 +37,7 @@ public class Turret implements TDConstants {
     protected double[] xCanonCoordinates;
     protected double[] yCanonCoordinates;
     protected double canonLength = 0;
+    protected double investedMoney;
 
     //constructor
     public Turret(String type, double x, double y) {
@@ -277,5 +278,21 @@ public class Turret implements TDConstants {
 
     public void addReload(){
         this.addReload(1);
+    }
+
+    public double getInvestedMoney() {
+        return investedMoney;
+    }
+
+    public void setInvestedMoney(double investedMoney) {
+        this.investedMoney = investedMoney;
+    }
+
+    public void invest(double money){
+        this.investedMoney += money;
+    }
+
+    public double getSellValue(){
+        return this.investedMoney * 0.8;
     }
 }

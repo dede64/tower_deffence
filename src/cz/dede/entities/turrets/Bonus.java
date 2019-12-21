@@ -24,5 +24,6 @@ public class Bonus extends Turret {
         this.damageRadius = DAMAGE_RADIUS;
         this.currentLoad = this.reloadTime;
         this.canonLength = 60;
+        this.investedMoney = this.cost;
     }
 }

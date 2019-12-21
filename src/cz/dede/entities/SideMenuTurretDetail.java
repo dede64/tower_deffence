@@ -40,7 +40,7 @@ public class SideMenuTurretDetail extends SideMenu {
         this.turretAttackSpeedInfo.setLocation(canvas.getWidth() - SIDE_MENU_WIDTH/2.0 - this.turretAttackSpeedInfo.getWidth() / 2.0, 280);
 
         this.confirm = new Button((turret.getCost() / 2) + "$", canvas.getWidth() - SIDE_MENU_WIDTH + 40, 310, SIDE_MENU_WIDTH - 80, 30, Color.RED);
-        this.sell = new Button("SELL: " + turret.getCost() + "$", canvas.getWidth() - SIDE_MENU_WIDTH + 40, 350, SIDE_MENU_WIDTH - 80, 30, Color.RED); //TODO make function that counts sell value of turret
+        this.sell = new Button(String.format("SELL: %.1f$", turret.getSellValue()), canvas.getWidth() - SIDE_MENU_WIDTH + 40, 350, SIDE_MENU_WIDTH - 80, 30, Color.RED);
         this.getButtons().add(this.confirm);
         this.getButtons().add(this.sell);
     }
@@ -61,7 +61,8 @@ public class SideMenuTurretDetail extends SideMenu {
 
     public void buy(Player player){
         if(player.getMoney() >= turret.getCost() /2){
-            player.setMoney(player.getMoney() - turret.getCost() / 2.0);
+            player.setMoney(player.getMoney() - turret.getCost() / 2.0);//TODO there should be constant how moch money the upgrade costs.
+            turret.invest(turret.getCost()/2.0);
 
             turret.setDmg(turret.getDmg() * 1.2);
             turret.setRange(turret.getRange() * 1.2);
@@ -76,7 +77,7 @@ public class SideMenuTurretDetail extends SideMenu {
 
             this.turret.setCost((int) (this.turret.getCost() * 1.4));
             this.confirm.getText().setLabel(turret.getCost() / 2 + "$");
-            this.sell.getText().setLabel("SELL: " + turret.getCost() + "$");
+            this.sell.getText().setLabel(String.format("SELL: %.1f$", turret.getSellValue()));
             this.turret.getBase().setColor(this.turret.getBase().getColor().darker());
             this.update(player);
 

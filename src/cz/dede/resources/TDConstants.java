@@ -99,7 +99,7 @@ public interface TDConstants {
     double BONUS_DMG = 35;
     int BONUS_RELOAD = 30;
     double BONUS_BULLET_SPEED = 5;
-    int BONUS_COST = 1500;
+    int BONUS_COST = 200;
     double[] BONUS_BASE_X = {
             0, 0, -20, -20, -30, -40, -30, -40, -40, -30, -40, -30, -20, -20,
             20, 20, 30, 40, 30, 40, 40, 30, 40, 30, 20, 20, 0, 0
