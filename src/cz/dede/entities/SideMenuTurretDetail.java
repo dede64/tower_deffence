@@ -14,6 +14,7 @@ public class SideMenuTurretDetail extends SideMenu {
     private GLabel turretRangeInfo;
     private GLabel turretAttackSpeedInfo;
     private Button confirm;
+    private Button sell;
     private boolean isAvailable = false; // TODO (Each turret should have own uprade pattern)
 
     public SideMenuTurretDetail(Turret turret) {
@@ -39,7 +40,9 @@ public class SideMenuTurretDetail extends SideMenu {
         this.turretAttackSpeedInfo.setLocation(canvas.getWidth() - SIDE_MENU_WIDTH/2.0 - this.turretAttackSpeedInfo.getWidth() / 2.0, 280);
 
         this.confirm = new Button((turret.getCost() / 2) + "$", canvas.getWidth() - SIDE_MENU_WIDTH + 40, 310, SIDE_MENU_WIDTH - 80, 30, Color.RED);
+        this.sell = new Button("SELL: " + turret.getCost() + "$", canvas.getWidth() - SIDE_MENU_WIDTH + 40, 350, SIDE_MENU_WIDTH - 80, 30, Color.RED); //TODO make function that counts sell value of turret
         this.getButtons().add(this.confirm);
+        this.getButtons().add(this.sell);
     }
 
     public void update(Player player){
@@ -73,6 +76,7 @@ public class SideMenuTurretDetail extends SideMenu {
 
             this.turret.setCost((int) (this.turret.getCost() * 1.4));
             this.confirm.getText().setLabel(turret.getCost() / 2 + "$");
+            this.sell.getText().setLabel("SELL: " + turret.getCost() + "$");
             this.turret.getBase().setColor(this.turret.getBase().getColor().darker());
             this.update(player);
 
@@ -104,6 +108,7 @@ public class SideMenuTurretDetail extends SideMenu {
             this.turretDMGInfo.setVisible(false);
             this.turretAttackSpeedInfo.setVisible(false);
             confirm.setVisible(false);
+            sell.setVisible(false);
         }
     }
 
@@ -118,7 +123,9 @@ public class SideMenuTurretDetail extends SideMenu {
         canvas.remove(this.turretRangeInfo);
         canvas.remove(this.turretAttackSpeedInfo);
         confirm.delete();
+        sell.delete();
         this.getButtons().remove(confirm);
+        this.getButtons().remove(sell);
     }
 
     @Override
@@ -134,6 +141,7 @@ public class SideMenuTurretDetail extends SideMenu {
             this.turretDMGInfo.setVisible(true);
             this.turretAttackSpeedInfo.setVisible(true);
             confirm.setVisible(true);
+            sell.setVisible(true);
         }
     }
 
@@ -183,5 +191,13 @@ public class SideMenuTurretDetail extends SideMenu {
 
     public void setAvailable(boolean available) {
         isAvailable = available;
+    }
+
+    public Button getSell() {
+        return sell;
+    }
+
+    public void setSell(Button sell) {
+        this.sell = sell;
     }
 }

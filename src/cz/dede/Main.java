@@ -722,8 +722,13 @@ public class Main extends GraphicsProgram implements TDConstants {
                 return button;
             }
         }
-        if(sideMenuTurretDetail != null && (sideMenuTurretDetail.getConfirm().getBackground().equals(object) || sideMenuTurretDetail.getConfirm().getText().equals(object)))
-            return sideMenuTurretDetail.getConfirm();
+        if(sideMenuTurretDetail != null){
+            for(Button button : sideMenuTurretDetail.getButtons()){
+                if(button.getSprites().contains(object)){
+                    return button;
+                }
+            }
+        }
         return null;
 
     }
@@ -733,10 +738,23 @@ public class Main extends GraphicsProgram implements TDConstants {
             Object obj = getObject(lastClicked, turrets, sideMenuShop);
             lastClicked = null;
 
-            if(obj instanceof  Button && sideMenuTurretDetail != null && sideMenuTurretDetail.getConfirm() == obj){
-                sideMenuTurretDetail.buy(player);
-                colorShop(sideMenuShop, player);
-                return;
+            if(obj instanceof  Button && sideMenuTurretDetail != null){
+                if(sideMenuTurretDetail.getConfirm() == obj){
+                    sideMenuTurretDetail.buy(player);
+                    colorShop(sideMenuShop, player);
+                    return;
+                }
+                else if(sideMenuTurretDetail.getSell() == obj){
+                    Turret turret = sideMenuTurretDetail.getTurret();
+                    turrets.remove(turret);
+                    player.setMoney(player.getMoney() + turret.getCost()); //TODO make function which makes sell value.
+                    turret.delete();
+                    sideMenuTurretDetail.delete();
+                    sideMenuTurretDetail = null;
+                    sideMenuShop.showMenu();
+                    colorShop(sideMenuShop, player);
+                    return;
+                }
             }
 
             if (obj instanceof Turret && turrets.contains(obj)){

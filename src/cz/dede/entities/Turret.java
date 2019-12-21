@@ -45,6 +45,11 @@ public class Turret implements TDConstants {
         this.y = y;
     }
 
+    public void delete(){
+        canvas.remove(base);
+        canvas.remove(canon);
+    }
+
     public static Turret makeTurret(String type, double x, double y){
         switch (type){
             case "destroyer":

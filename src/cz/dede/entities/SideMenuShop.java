@@ -51,6 +51,7 @@ public class SideMenuShop extends SideMenu implements TDConstants {
         this.pauseButton = new PauseButton("", canvas.getWidth() - SIDE_MENU_WIDTH + 70, canvas.getHeight() - 235, SIDE_MENU_WIDTH - 140, 60, new Color(0x2252AA));
         this.pauseButton.setButtonEventListener((Player player)->{
             player.changePause(); // TODO somehow change icon on pause button.
+
         });
 
         this.getButtons().add(this.nextWaveButton);
