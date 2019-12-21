@@ -1,6 +1,7 @@
 package cz.dede.entities;
 
 import acm.graphics.GOval;
+import acm.graphics.GRect;
 
 import java.awt.*;
 
@@ -17,8 +18,8 @@ public class Particle {
     private double totalTime;
     private Color color;
 
-    public Particle(double x, double y, double xVelocity, double yVelocity, Color color, double duration) {
-        particle = new GOval(x, y, 4, 4);
+    public Particle(double x, double y, double xVelocity, double yVelocity, Color color, double duration, int particleSize) {
+        particle = new GOval(x, y, particleSize, particleSize);
         particle.setFilled(true);
         particle.setFillColor(color);
         canvas.add(particle);

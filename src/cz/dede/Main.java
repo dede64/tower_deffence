@@ -77,26 +77,28 @@ public class Main extends GraphicsProgram implements TDConstants {
         while(true) {
             start = System.nanoTime();
 
-            moveEnemies(enemies, player);
-            moveBullets(bullets);
-            updateParticles(particles);
-            rotateCanons(turrets, enemies);
-            checkCollisions(bullets);
-            shoot(turrets, bullets, particles);
-            checkHealth(enemies, player, sideMenuShop);
-            healEnemies(enemies);
-            moveHealthBars(enemies);
+            if(!player.isPause()){
+                moveEnemies(enemies, player);
+                moveBullets(bullets);
+                rotateCanons(turrets, enemies);
+                checkCollisions(bullets);
+                shoot(turrets, bullets, particles);
+                checkHealth(enemies, player, sideMenuShop);
+                healEnemies(enemies);
+                moveHealthBars(enemies);
+                addEnemies(enemies, waves, waveCounter, pathX, pathY, player);
+                checkPlayerLives(player);
+                waveCounter += 1;
+            }
+
             moveRangeIndicator(rangeIndicator, turrets, sideMenuShop);
             showShopInfo(sideMenuShop);
             changeScoreLabel(player, score, lastFps);
             moveOnClick();
             placeTurret(turrets, player, sideMenuShop);
-            addEnemies(enemies, waves, waveCounter, pathX, pathY, player);
-            checkPlayerLives(player);
+            updateParticles(particles);
             hideWaveButton(sideMenuShop, enemies, player);
             processClicks(sideMenuShop, turrets, player);
-
-            waveCounter += 1;
 
 
             canvas.repaint();
@@ -272,6 +274,7 @@ public class Main extends GraphicsProgram implements TDConstants {
         }
     }
 
+
     private void createParticles(ArrayList<Particle> particles, Color color, int count, double x, double y, double angle, double speed, double duration){
         for (int i = 0; i < count; i++){
             double angleDif = rg.nextDouble(-30, 30) + angle;
@@ -280,7 +283,7 @@ public class Main extends GraphicsProgram implements TDConstants {
             }
             double ySpeed = -Math.cos(Math.toRadians(angleDif)) * speed;
             double xSpeed = -Math.sin(Math.toRadians(angleDif)) * speed;
-            Particle particle = new Particle(x, y, xSpeed, ySpeed, color, duration);
+            Particle particle = new Particle(x, y, xSpeed, ySpeed, color, duration, 4);
             particles.add(particle);
         }
     }
@@ -456,7 +459,7 @@ public class Main extends GraphicsProgram implements TDConstants {
         int sumOfAll = lastFps.stream().mapToInt(value -> value).sum();
         int averageFps = sumOfAll / lastFps.size();
         label.setLabel("Money: " + (int) player.getMoney() + "$   Health: " + player.getLives() + "   Wave: " + (player.getWaveNumber() +1) +
-                "   Score: " + player.getKilledEnemies() + " FPS: " + averageFps);
+                "   Score: " + player.getKilledEnemies() + "  FPS: " + averageFps);
         if(sideMenuTurretDetail != null){
             sideMenuTurretDetail.update(player);
         }
@@ -715,7 +718,7 @@ public class Main extends GraphicsProgram implements TDConstants {
             }
         }
         for(Button button : sideMenuShop.getButtons()){
-            if(button.getBackground().equals(object) || button.getText().equals(object)){
+            if(button.getSprites().contains(object)){ // TODO do this also with other objects.
                 return button;
             }
         }

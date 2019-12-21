@@ -16,6 +16,7 @@ import static cz.dede.Main.canvas;
 public class SideMenuShop extends SideMenu implements TDConstants {
     private Button nextWaveButton;
     private Button fasterWaveButton;
+    private PauseButton pauseButton;
     private GRect cancel;
     private GPolygon shopInfoBox;
 
@@ -33,17 +34,28 @@ public class SideMenuShop extends SideMenu implements TDConstants {
         addTurret("sniper", canvas.getWidth()-SIDE_MENU_WIDTH/2.0, 275.0);
         addTurret("dome", canvas.getWidth()-SIDE_MENU_WIDTH/2.0, 375.0);
         addTurret("rocketer", canvas.getWidth()-SIDE_MENU_WIDTH/2.0, 475.0);
+
+
         this.nextWaveButton = new Button("Next wave!", canvas.getWidth()-SIDE_MENU_WIDTH+5, canvas.getHeight()-165, SIDE_MENU_WIDTH - 10, 30, Color.GREEN);
         this.nextWaveButton.setButtonEventListener((Player player)->{
             player.setStarted(true);
         });
+
+
         this.fasterWaveButton = new Button("Faster", canvas.getWidth()-SIDE_MENU_WIDTH+5, canvas.getHeight()-60, SIDE_MENU_WIDTH - 10, 30, Color.CYAN);
         this.fasterWaveButton.setVisible(false);
         this.fasterWaveButton.setButtonEventListener((Player player)->{
             player.setTick(FAST_TICK);
         });
+
+        this.pauseButton = new PauseButton("", canvas.getWidth() - SIDE_MENU_WIDTH + 70, canvas.getHeight() - 235, SIDE_MENU_WIDTH - 140, 60, new Color(0x2252AA));
+        this.pauseButton.setButtonEventListener((Player player)->{
+            player.changePause(); // TODO somehow change icon on pause button.
+        });
+
         this.getButtons().add(this.nextWaveButton);
         this.getButtons().add(this.fasterWaveButton);
+        this.getButtons().add(this.pauseButton);
 
         addInfoBox();
     }

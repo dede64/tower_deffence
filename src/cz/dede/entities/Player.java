@@ -15,6 +15,7 @@ public class Player implements TDConstants {
     private String name;
     private int tick = TICK;
     private double moneyBonus= 1;
+    private boolean pause = false;
 
     //constructor
     public Player() {
@@ -100,5 +101,17 @@ public class Player implements TDConstants {
 
     public boolean getGameOverRendered(){
         return this.gameOverRendered;
+    }
+
+    void changePause(){
+        this.pause = !this.pause;
+    }
+
+    public boolean isPause() {
+        return pause;
+    }
+
+    public void setPause(boolean pause) {
+        this.pause = pause;
     }
 }
