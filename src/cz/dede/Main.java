@@ -155,6 +155,10 @@ public class Main extends GraphicsProgram implements TDConstants {
         }
     }
 
+    /**
+     * method to update particles (calls update method on all of them
+     * @param particles
+     */
     private void updateParticles(ArrayList<Particle> particles){
         for(int i = particles.size() -1 ; i >= 0; i--){
             Particle particle = particles.get(i);

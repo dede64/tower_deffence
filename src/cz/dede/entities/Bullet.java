@@ -38,7 +38,7 @@ public class Bullet implements TDConstants {
         p.addVertex(0, -5);
         p.addVertex(-5, 5);
         p.addVertex(5, 5);
-        p.addVertex(0, -5);
+        p.addVertex(0, -5); //TODO each turret should have own shape of bullet (sniper long - knocker smaller etc...)
         p.setFilled(true);
         canvas.add(p, this.x, this.y);
         return p;
@@ -58,7 +58,7 @@ public class Bullet implements TDConstants {
         this.x += x_speed;
         this.y += y_speed;
         this.bullet.setLocation(this.x, this.y);
-        double rotation = Main.getAngle(0, this.x, 0, this.y);
+        double rotation = Main.getAngle(this.x, this.y, enemy.getX(), enemy.getY());
         this.bullet.rotate(-this.lastRotation);
         this.bullet.rotate(rotation);
         this.lastRotation = rotation;
