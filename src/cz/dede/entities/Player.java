@@ -1,6 +1,14 @@
 package cz.dede.entities;
 
+import acm.graphics.GCanvas;
+import acm.graphics.GLabel;
+import acm.graphics.GRect;
 import cz.dede.resources.TDConstants;
+
+import java.awt.*;
+import java.util.ArrayList;
+
+import static cz.dede.Main.canvas;
 
 /**
  * Class of Player object
@@ -17,10 +25,15 @@ public class Player implements TDConstants {
     private double moneyBonus= 1;
     private boolean pause = false;
 
+    private GRect gameOverBackground;
+    private GLabel gameOverLabel;
+    private ArrayList<Button> buttons;
+
     //constructor
     public Player() {
         this.money = PLAYER_MONEY;
         this.lives = PLAYER_LIVES;
+        this.buttons = new ArrayList<>();
     }
 
     public double getMoney() {
@@ -113,5 +126,75 @@ public class Player implements TDConstants {
 
     public void setPause(boolean pause) {
         this.pause = pause;
+    }
+
+    public void showGameOver(){
+        gameOverBackground = new GRect(canvas.getWidth(), canvas.getHeight());
+        gameOverBackground.setFilled(true);
+        gameOverBackground.setFillColor(new Color(0xdddddddd, true));
+        gameOverBackground.setLocation(0, 0);
+        canvas.add(gameOverBackground);
+
+        gameOverLabel = new GLabel("!GAME OVER!");
+        gameOverLabel.setFont("Impact-40");
+        gameOverLabel.setLocation((canvas.getWidth())/2.0-gameOverLabel.getWidth()/2, canvas.getHeight()/2.0-gameOverLabel.getHeight()/2);
+        canvas.add(gameOverLabel);
+
+        Button continueInEndless = new Button("Continue in endless", canvas.getWidth()/2.0 - 110, canvas.getHeight()/2.0 + 50, 220, 30, Color.GREEN);
+        Button restart = new Button("Restart", canvas.getWidth()/2.0- 110, canvas.getHeight()/2.0 + 100, 220, 30, Color.RED);
+        buttons.add(continueInEndless);
+        buttons.add(restart);
+
+        continueInEndless.setButtonEventListener(Player::continueInEndless);
+        restart.setButtonEventListener((Player::restart));
+    }
+
+    public void hideGameOver(){
+        if(gameOverBackground != null){
+            canvas.remove(gameOverBackground);
+            canvas.remove(gameOverLabel);
+            for(Button button : buttons){
+                button.delete();
+            }
+            gameOverBackground = null;
+            gameOverLabel = null;
+            buttons = new ArrayList<>();
+        }
+    }
+
+    public void restart(){
+        lives = PLAYER_LIVES;
+        hideGameOver();
+        gameOverRendered = false;
+        pause = false;
+    }
+
+    public void continueInEndless(){
+        hideGameOver();
+        pause = false;
+    }
+
+    public GRect getGameOverBackground() {
+        return gameOverBackground;
+    }
+
+    public void setGameOverBackground(GRect gameOverBackground) {
+        this.gameOverBackground = gameOverBackground;
+    }
+
+    public GLabel getGameOverLabel() {
+        return gameOverLabel;
+    }
+
+    public void setGameOverLabel(GLabel gameOverLabel) {
+        this.gameOverLabel = gameOverLabel;
+    }
+
+    public ArrayList<Button> getButtons() {
+        return buttons;
+    }
+
+    public void setButtons(ArrayList<Button> buttons) {
+        this.buttons = buttons;
     }
 }

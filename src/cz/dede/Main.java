@@ -605,13 +605,10 @@ public class Main extends GraphicsProgram implements TDConstants {
      * Checks if player lives aren't below zero, if they are -> game over
      */
     private void checkPlayerLives(Player player){
-        if(player.getLives()<=0 && !player.getGameOverRendered()) {
-            GLabel gameOver = new GLabel("!GAME OVER!");
-            gameOver.setFont("Impact-40");
-            gameOver.setLocation((getWidth()-SIDE_MENU_WIDTH)/2.0-gameOver.getWidth()/2, getHeight()/2.0-gameOver.getHeight()/2);
-            add(gameOver);
+        if(player.getLives()<=0 && !player.getGameOverRendered() ) {
+            player.showGameOver();
             player.setGameOverRendered(true);
-//			pause(1000000000);
+            player.setPause(true);
         }
     }
 
@@ -705,7 +702,7 @@ public class Main extends GraphicsProgram implements TDConstants {
     }
 
 
-    public Object getObject(GObject object, ArrayList<Turret> turrets, SideMenuShop sideMenuShop){ // TODO it should handle all events which uses mouse click event
+    public Object getObject(GObject object, ArrayList<Turret> turrets, SideMenuShop sideMenuShop, Player player){ // TODO it should handle all events which uses mouse click event
         for(Turret turret: turrets){
             if(turret.getCanon().equals(object) || turret.getBase().equals(object)){
                 return turret;
@@ -728,13 +725,18 @@ public class Main extends GraphicsProgram implements TDConstants {
                 }
             }
         }
+        for(Button button: player.getButtons()){
+            if(button.getSprites().contains(object)){
+                return button;
+            }
+        }
         return null;
 
     }
 
     private void processClicks(SideMenuShop sideMenuShop, ArrayList<Turret> turrets, Player player){
         if(lastClicked != null){
-            Object obj = getObject(lastClicked, turrets, sideMenuShop);
+            Object obj = getObject(lastClicked, turrets, sideMenuShop, player);
             lastClicked = null;
 
             if(obj instanceof  Button && sideMenuTurretDetail != null){
