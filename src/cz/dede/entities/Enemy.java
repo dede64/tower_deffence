@@ -2,15 +2,14 @@ package cz.dede.entities;
 
 import acm.graphics.GPolygon;
 import acm.graphics.GRect;
-import acm.util.RandomGenerator;
-import cz.dede.Main;
+import cz.dede.Game;
 import cz.dede.entities.enemies.*;
 import cz.dede.resources.TDConstants;
 
 import java.awt.*;
 import java.util.ArrayList;
 
-import static cz.dede.Main.canvas;
+import static cz.dede.Game.canvas;
 
 /**
  * Class of Enemy object
@@ -90,7 +89,7 @@ public class Enemy implements TDConstants {
         double goalY = this.pathY.get(0);
         double distanceX = goalX-this.x;
         double distanceY = goalY-this.y;
-        double distance = Main.countDistance(distanceX, distanceY);
+        double distance = Game.countDistance(distanceX, distanceY);
         if(distance<5) {
             if(this.pathX.size()==1) {
                 GPolygon shape = this.vehicle;
@@ -113,7 +112,7 @@ public class Enemy implements TDConstants {
             this.vehicle.setLocation(this.x, this.y);
             this.redHealth.setLocation(this.x-15, this.y-20);
             this.greenHealth.setLocation(this.x-15, this.y-20);
-            double rotation = Main.getAngle(0, distanceX, 0, distanceY);
+            double rotation = Game.getAngle(0, distanceX, 0, distanceY);
             if(distanceX/distance*this.speed>this.speed*0.9) {
                 rotation = -180;
             }

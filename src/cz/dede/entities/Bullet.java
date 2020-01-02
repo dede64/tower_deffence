@@ -1,10 +1,10 @@
 package cz.dede.entities;
 
 import acm.graphics.GPolygon;
-import cz.dede.Main;
+import cz.dede.Game;
 import cz.dede.resources.TDConstants;
 
-import static cz.dede.Main.canvas;
+import static cz.dede.Game.canvas;
 
 /**
  * Class of Bullet object
@@ -58,7 +58,7 @@ public class Bullet implements TDConstants {
         this.x += x_speed;
         this.y += y_speed;
         this.bullet.setLocation(this.x, this.y);
-        double rotation = Main.getAngle(this.x, this.y, enemy.getX(), enemy.getY());
+        double rotation = Game.getAngle(this.x, this.y, enemy.getX(), enemy.getY());
         this.bullet.rotate(-this.lastRotation);
         this.bullet.rotate(rotation);
         this.lastRotation = rotation;

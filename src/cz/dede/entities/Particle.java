@@ -1,11 +1,10 @@
 package cz.dede.entities;
 
 import acm.graphics.GOval;
-import acm.graphics.GRect;
 
 import java.awt.*;
 
-import static cz.dede.Main.canvas;
+import static cz.dede.Game.canvas;
 
 public class Particle {
 

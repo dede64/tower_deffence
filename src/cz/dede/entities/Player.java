@@ -1,6 +1,5 @@
 package cz.dede.entities;
 
-import acm.graphics.GCanvas;
 import acm.graphics.GLabel;
 import acm.graphics.GRect;
 import cz.dede.resources.TDConstants;
@@ -8,7 +7,7 @@ import cz.dede.resources.TDConstants;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static cz.dede.Main.canvas;
+import static cz.dede.Game.canvas;
 
 /**
  * Class of Player object
@@ -24,6 +23,7 @@ public class Player implements TDConstants {
     private int tick = TICK;
     private double moneyBonus= 1;
     private boolean pause = false;
+    private boolean restartGame = false;
 
     private GRect gameOverBackground;
     private GLabel gameOverLabel;
@@ -163,10 +163,8 @@ public class Player implements TDConstants {
     }
 
     public void restart(){
-        lives = PLAYER_LIVES;
-        hideGameOver();
-        gameOverRendered = false;
         pause = false;
+        restartGame = true;
     }
 
     public void continueInEndless(){
@@ -196,5 +194,9 @@ public class Player implements TDConstants {
 
     public void setButtons(ArrayList<Button> buttons) {
         this.buttons = buttons;
+    }
+
+    public boolean isRestartGame() {
+        return restartGame;
     }
 }
