@@ -7,7 +7,7 @@ import acm.graphics.GRect;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static cz.dede.Game.canvas;
+import static cz.dede.Main.canvas;
 
 public class Button{
     private GRect background;

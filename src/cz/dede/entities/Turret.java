@@ -10,7 +10,7 @@ import javafx.util.Pair;
 
 import java.awt.*;
 
-import static cz.dede.Game.canvas;
+import static cz.dede.Main.canvas;
 
 /**
  * Class of Turret object

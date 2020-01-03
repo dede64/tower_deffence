@@ -4,7 +4,7 @@ import acm.graphics.GOval;
 
 import java.awt.*;
 
-import static cz.dede.Game.canvas;
+import static cz.dede.Main.canvas;
 
 public class Particle {
 

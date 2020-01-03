@@ -4,7 +4,7 @@ import acm.graphics.GLabel;
 
 import java.awt.*;
 
-import static cz.dede.Game.canvas;
+import static cz.dede.Main.canvas;
 
 public class SideMenuTurretDetail extends SideMenu {
 

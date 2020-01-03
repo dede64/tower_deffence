@@ -8,7 +8,7 @@ import cz.dede.resources.TDConstants;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static cz.dede.Game.canvas;
+import static cz.dede.Main.canvas;
 
 /**
  * Class of the side menu

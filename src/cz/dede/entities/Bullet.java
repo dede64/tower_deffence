@@ -4,7 +4,7 @@ import acm.graphics.GPolygon;
 import cz.dede.Game;
 import cz.dede.resources.TDConstants;
 
-import static cz.dede.Game.canvas;
+import static cz.dede.Main.canvas;
 
 /**
  * Class of Bullet object

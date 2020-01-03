@@ -15,20 +15,13 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static cz.dede.Main.*;
 import static java.lang.Thread.sleep;
 
-public class Game extends GraphicsProgram implements TDConstants {
+public class Game implements TDConstants { // extends GraphicsProgram
 
     //instance variables
-    private double mouseX;
-    private double mouseY;
-    private boolean mouseRelease = false;
-    private Turret onClick = null;
-    public static GCanvas canvas;
-    private GObject lastClicked = null;
-
     private SideMenuTurretDetail sideMenuTurretDetail;
-
     /** A random number generator **/
     private RandomGenerator rg = new RandomGenerator();
 
@@ -36,12 +29,10 @@ public class Game extends GraphicsProgram implements TDConstants {
 	AudioClip ShootClip = MediaTools.loadAudioClip("res/turret.au");
 
     public void run() {
-        canvas = getGCanvas();
-        canvas.setAutoRepaintFlag(false);
 
         //initialization
         GImage background = new GImage("res/map.png", 0, 0);
-        add(background);
+        canvas.add(background);
         Player player = new Player();
         ArrayList<Turret> turrets = new ArrayList<>();
         ArrayList<Enemy> enemies = new ArrayList<>();
@@ -56,7 +47,6 @@ public class Game extends GraphicsProgram implements TDConstants {
         ArrayList<Integer> lastTps = new ArrayList<>();
         lastTps.add(1);
 
-        addMouseListeners();
         colorShop(sideMenuShop, player);
 
         ArrayList<ArrayList<String>> waves = new ArrayList<ArrayList<String>>();
@@ -146,12 +136,12 @@ public class Game extends GraphicsProgram implements TDConstants {
             Bullet bullet = bullets.get(i);
             if(bullet.getEnemy()==null) {
                 GPolygon shape = bullet.getBullet();
-                remove(shape);
+                canvas.remove(shape);
                 bullets.remove(i);
             }
-            else if(bullet.getX()<-20||bullet.getX()>getWidth()+20||bullet.getY()<-20||bullet.getY()>getHeight()+20) {
+            else if(bullet.getX()<-20||bullet.getX()>canvas.getWidth()+20||bullet.getY()<-20||bullet.getY()>canvas.getHeight()+20) {
                 GPolygon shape = bullet.getBullet();
-                remove(shape);
+                canvas.remove(shape);
                 bullets.remove(i);
             }
             else{
@@ -258,7 +248,7 @@ public class Game extends GraphicsProgram implements TDConstants {
             if(distance<=bullet.getDamageRadius()) {
                 bullet.getEnemy().substractHealth(bullet.getDmg());
                 GPolygon shape = bullet.getBullet();
-                remove(shape);
+                canvas.remove(shape);
                 bullets.remove(b);
             }
         }
@@ -307,9 +297,9 @@ public class Game extends GraphicsProgram implements TDConstants {
                 GPolygon shape = enemy.getVehicle();
                 GRect greenBar = enemy.getGreenHealth();
                 GRect redBar = enemy.getRedHealth();
-                remove(shape);
-                remove(greenBar);
-                remove(redBar);
+                canvas.remove(shape);
+                canvas.remove(greenBar);
+                canvas.remove(redBar);
                 player.setMoney(player.getMoney() + enemy.getAward() * player.getMoneyBonus());
                 player.setKilledEnemies(player.getKilledEnemies() + 1);
                 enemies.remove(e);
@@ -338,50 +328,50 @@ public class Game extends GraphicsProgram implements TDConstants {
         }
     }
 
-    /**
-     * method to get coordinates of the mouse
-     */
-    public void mouseMoved(MouseEvent e) {
-        mouseX = e.getX();
-        mouseY = e.getY();
-    }
+//    /**
+//     * method to get coordinates of the mouse
+//     */
+//    public void mouseMoved(MouseEvent e) {
+//        mouseX = e.getX();
+//        mouseY = e.getY();
+//    }
+//
+//    /**
+//     * method to get coordinates of the mouse
+//     */
+//    public void mouseDragged(MouseEvent e) {
+//        mouseX = e.getX();
+//        mouseY = e.getY();
+//    }
+//
+//    /**
+//     * method to catch mouse clicked event
+//     */
+//    public void mousePressed(MouseEvent e) {
+//        mouseX = e.getX();
+//        mouseY = e.getY();
+//
+//        lastClicked = canvas.getElementAt(new GPoint(e.getPoint()));
+//
+//    }
 
-    /**
-     * method to get coordinates of the mouse
-     */
-    public void mouseDragged(MouseEvent e) {
-        mouseX = e.getX();
-        mouseY = e.getY();
-    }
-
-    /**
-     * method to catch mouse clicked event
-     */
-    public void mousePressed(MouseEvent e) {
-        mouseX = e.getX();
-        mouseY = e.getY();
-
-        lastClicked = getElementAt(new GPoint(e.getPoint()));
-
-    }
-
-    /**
-     * method to catch mouse released event
-     */
-    public void mouseReleased(MouseEvent e) {
-        mouseX = e.getX();
-        mouseY = e.getY();
-        if(onClick!=null) {
-            mouseRelease = true;
-        }
-    }
+//    /**
+//     * method to catch mouse released event
+//     */
+//    public void mouseReleased(MouseEvent e) {
+//        mouseX = e.getX();
+//        mouseY = e.getY();
+//        if(onClick!=null) {
+//            mouseRelease = true;
+//        }
+//    }
 
     /**
      * method to initialize range indicator
      */
     private GOval createIndicator() {
         GOval rangeIndicator = new GOval(0,0);
-        add(rangeIndicator);
+        canvas.add(rangeIndicator);
         return rangeIndicator;
     }
 
@@ -398,9 +388,9 @@ public class Game extends GraphicsProgram implements TDConstants {
             }
         }
         if (menu.getCancel().contains(mouseX, mouseY)&&onClick!=null) {
-            remove(onClick.getBase());
-            remove(onClick.getCanon());
-            remove(menu.getCancel());
+            canvas.remove(onClick.getBase());
+            canvas.remove(onClick.getCanon());
+            canvas.remove(menu.getCancel());
             onClick = null;
             ri.setSize(0, 0);
         }
@@ -457,7 +447,7 @@ public class Game extends GraphicsProgram implements TDConstants {
         String font = "Franklin Gothic Medium-" + size;
         label.setFont(font);
         label.setColor(Color.GRAY);
-        add(label, x, y);
+        canvas.add(label, x, y);
         return label;
     }
 
@@ -494,10 +484,10 @@ public class Game extends GraphicsProgram implements TDConstants {
             turrets.add(Turret.makeTurret(onClick.getType(), currentX-currentX%40+20, currentY-currentY%40+20));
             for (Turret turret : turrets) turret.getCanon().sendToFront();
             mouseRelease = false;
-            remove(onClick.getBase());
-            remove(onClick.getCanon());
+            canvas.remove(onClick.getBase());
+            canvas.remove(onClick.getCanon());
             player.setMoney(player.getMoney() - onClick.getCost());
-            remove(menu.getCancel());
+            canvas.remove(menu.getCancel());
             onClick = null;
             checkTurretCombination(turrets, player);
             colorShop(menu, player);
@@ -789,7 +779,7 @@ public class Game extends GraphicsProgram implements TDConstants {
             if(obj instanceof Turret && sideMenuShop.getTurretShop().contains(obj)){
                 if(player.getMoney() >= ((Turret) obj).getCost()){
                     onClick = Turret.makeTurret(((Turret) obj).getType(), mouseX, mouseY);
-                    add(sideMenuShop.getCancel());
+                    canvas.add(sideMenuShop.getCancel());
                 }
                 return;
             }
