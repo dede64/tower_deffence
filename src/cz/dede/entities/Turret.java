@@ -271,7 +271,7 @@ public class Turret implements TDConstants {
         this.yCanonCoordinates = yCanonCoordinates;
     }
 
-    public void addReload(int reload){
+    public void addReload(double reload){
         this.currentLoad += reload;
     }
 

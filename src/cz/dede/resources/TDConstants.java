@@ -18,7 +18,8 @@ public interface TDConstants {
 
     int TICK = 8;
     int FAST_TICK = 2;
-    int AVERAGE_FPS = 40;
+    int AVERAGE_FPS = 40; // how many cycles are averaged into fps number
+    int TARGET_FPS = 60;
 
     //--------------------------------TURRETS-------------------------------------------
 
@@ -28,8 +29,8 @@ public interface TDConstants {
     String DESTROYER_TARGET = "ground";
     double DESTROYER_RANGE = 250;
     double DESTROYER_DMG = 8;
-    int DESTROYER_RELOAD = 30;
-    double DESTROYER_BULLET_SPEED = 5;
+    double DESTROYER_RELOAD = 250; //ms
+    double DESTROYER_BULLET_SPEED = 0.6; // px/ms
     int DESTROYER_COST = 50;
     double[] DESTROYER_BASE_X = {0, -20, -20, 20, 20, 0};
     double[] DESTROYER_BASE_Y = {-20, -20, 20, 20, -20, -20};
@@ -44,8 +45,8 @@ public interface TDConstants {
     String SNIPER_TARGET = "air/ground";
     double SNIPER_RANGE = 450;
     double SNIPER_DMG = 100;
-    int SNIPER_RELOAD = 300;
-    double SNIPER_BULLET_SPEED = 10;
+    double SNIPER_RELOAD = 2500; //ms
+    double SNIPER_BULLET_SPEED = 1.2;
     int SNIPER_COST = 140;
     double[] SNIPER_BASE_X = {0, -10, -10, -20, -20, -15, -15, -20, -20, -10, -10, 10, 10, 20, 20, 15, 15, 20, 20, 10, 10, 0};
     double[] SNIPER_BASE_Y = {-15, -15, -20, -20, -10, -10, 10, 10, 20, 20, 15, 15, 20, 20, 10, 10, -10, -10, -20, -20, -15, -15};
@@ -63,8 +64,8 @@ public interface TDConstants {
     String KNOCKER_TARGET = "ground";
     double KNOCKER_RANGE = 125;
     double KNOCKER_DMG = 15;
-    int KNOCKER_RELOAD = 12;
-    double KNOCKER_BULLET_SPEED = 8;
+    double KNOCKER_RELOAD = 100; //ms
+    double KNOCKER_BULLET_SPEED = 0.96;
     int KNOCKER_COST = 115;
 
     /**
@@ -73,8 +74,8 @@ public interface TDConstants {
     String DOME_TARGET = "air";
     double DOME_RANGE = 300;
     double DOME_DMG = 8;
-    int DOME_RELOAD = 14;
-    double DOME_BULLET_SPEED = 8;
+    double DOME_RELOAD = 120; //ms
+    double DOME_BULLET_SPEED = 0.96;
     int DOME_COST = 100;
 
     /**
@@ -83,8 +84,8 @@ public interface TDConstants {
     String ROCKET_TARGET = "ground";
     double ROCKET_RANGE = 2000;
     double ROCKET_DMG = 2000;
-    int ROCKET_RELOAD = 900;
-    double ROCKET_BULLET_SPEED = 1.5;
+    double ROCKET_RELOAD = 7500; //ms
+    double ROCKET_BULLET_SPEED = 0.18;
     int ROCKET_COST = 1500;
     double[] ROCKET_BASE_X = {0, 0, -10, -20, -10, -20, -10, 0, 10, 20, 10, 20, 10, 0, 0};
     double[] ROCKET_BASE_Y = {0, -10, -20, -20, 0, 20, 20, 10, 20, 20, 0, -20, -20, -10, 0};
@@ -97,8 +98,8 @@ public interface TDConstants {
     String BONUS_TARGET = "ground";
     double BONUS_RANGE = 280;
     double BONUS_DMG = 35;
-    int BONUS_RELOAD = 30;
-    double BONUS_BULLET_SPEED = 5;
+    double BONUS_RELOAD = 250; //ms
+    double BONUS_BULLET_SPEED = 0.6;
     int BONUS_COST = 200;
     double[] BONUS_BASE_X = {
             0, 0, -20, -20, -30, -40, -30, -40, -40, -30, -40, -30, -20, -20,
@@ -120,15 +121,15 @@ public interface TDConstants {
     int PUNCHER_SPEEDER_AWARD = 30;
     int PUNCHER_SPEEDER_HEALING = 0;
     int PUNCHER_SPEEDER_HEALTH = 150;
-    double PUNCHER_SPEEDER_SPEED = 3.5;
+    double PUNCHER_SPEEDER_SPEED = 0.42; // px/ms
 
     /**
      * Constants of puncher healer Enemy
      */
     int PUNCHER_HEALER_AWARD = 45;
-    int PUNCHER_HEALER_HEALING = 1;
+    double PUNCHER_HEALER_HEALING = 0.12;
     int PUNCHER_HEALER_HEALTH = 250;
-    double PUNCHER_HEALER_SPEED = 2;
+    double PUNCHER_HEALER_SPEED = 0.24;
 
     /**
      * Constants of puncher Enemy
@@ -136,7 +137,7 @@ public interface TDConstants {
     int PUNCHER_AWARD = 20;
     int PUNCHER_HEALING = 0;
     int PUNCHER_HEALTH = 140;
-    double PUNCHER_SPEED = 2;
+    double PUNCHER_SPEED = 0.24;
     double[] PUNCHER_X = {0, -5, -10, -7, -7, -3, -3, 3, 3, 7, 7, 10, 5, 0};
     double[] PUNCHER_Y = {-10, -10, 10, 10, 13, 13, 10, 10, 13, 13, 10, 10, -10, -10};
 
@@ -146,7 +147,7 @@ public interface TDConstants {
     int FLYER_AWARD = 20;
     int FLYER_HEALING = 0;
     int FLYER_HEALTH = 150;
-    double FLYER_SPEED = 2;
+    double FLYER_SPEED = 0.24;
     double[] FLYER_X = {0,-10, 0, 10, 0};
     double[] FLYER_Y = {-10, 0, 10, 0, -10};
 
@@ -156,7 +157,7 @@ public interface TDConstants {
     int BRIGER_AWARD = 200;
     int BRIGER_HEALING = 0;
     int BRIGER_HEALTH = 950;
-    double BRIGER_SPEED = 2;
+    double BRIGER_SPEED = 0.24;
     double[] BRIGER_X = {0, -7, -15, -10, -10, -5, -5, 5, 5, 10, 10, 15, 7, 0};
     double[] BRIGER_Y = {-15, -15, 15, 15, 20, 20, 15, 15, 20, 20, 15, 15, -15, -15};
 

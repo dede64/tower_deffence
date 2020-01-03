@@ -20,7 +20,7 @@ public class Enemy implements TDConstants {
     protected double health;
     protected String type;
     protected int award;
-    protected int healing;
+    protected double healing;
     protected double x;
     protected double y;
     protected double lastRotation = 0;
@@ -84,7 +84,7 @@ public class Enemy implements TDConstants {
     /**
      * method to move the enemy to the next point of path, if it is on the end of path it destroys object and substract a life
      */
-    public void move(ArrayList<Enemy> enemies, Player player) {
+    public void move(ArrayList<Enemy> enemies, Player player, double elapsedTime) {
         double goalX = this.pathX.get(0);
         double goalY = this.pathY.get(0);
         double distanceX = goalX-this.x;
@@ -107,13 +107,13 @@ public class Enemy implements TDConstants {
             }
         }
         else {
-            this.x += distanceX/distance*this.speed;
-            this.y += distanceY/distance*this.speed;
+            this.x += distanceX/distance*this.speed*elapsedTime;
+            this.y += distanceY/distance*this.speed*elapsedTime;
             this.vehicle.setLocation(this.x, this.y);
             this.redHealth.setLocation(this.x-15, this.y-20);
             this.greenHealth.setLocation(this.x-15, this.y-20);
             double rotation = Game.getAngle(0, distanceX, 0, distanceY);
-            if(distanceX/distance*this.speed>this.speed*0.9) {
+            if(distanceX/distance*this.speed*elapsedTime>this.speed*0.9*elapsedTime) {
                 rotation = -180;
             }
             this.vehicle.rotate(-this.lastRotation/2);
@@ -200,11 +200,11 @@ public class Enemy implements TDConstants {
         this.award = award;
     }
 
-    public int getHealing() {
+    public double getHealing() {
         return healing;
     }
 
-    public void setHealing(int healing) {
+    public void setHealing(double healing) {
         this.healing = healing;
     }
 

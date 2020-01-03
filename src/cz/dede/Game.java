@@ -67,9 +67,11 @@ public class Game extends GraphicsProgram implements TDConstants {
         long timeElapsed = 1;
         long cycleLength = 1;
 
+        long lastRender = System.currentTimeMillis();
+
         //MAIN LOOP
         while(true) {
-            start = System.nanoTime();
+            start = System.currentTimeMillis();
 
             if(player.isRestartGame()){
                 canvas.removeAll();
@@ -77,15 +79,15 @@ public class Game extends GraphicsProgram implements TDConstants {
             }
 
             if(!player.isPause()){
-                moveEnemies(enemies, player);
-                moveBullets(bullets);
+                moveEnemies(enemies, player, cycleLength);
+                moveBullets(bullets, cycleLength);
                 rotateCanons(turrets, enemies);
                 checkCollisions(bullets);
-                shoot(turrets, bullets, particles);
+                shoot(turrets, bullets, particles, cycleLength);
                 checkHealth(enemies, player, sideMenuShop);
-                healEnemies(enemies);
+                healEnemies(enemies, cycleLength);
                 moveHealthBars(enemies);
-                addEnemies(enemies, waves, waveCounter, pathX, pathY, player);
+                addEnemies(enemies, waves, waveCounter, pathX, pathY, player, cycleLength); //TODO it should be based on time not on frames
                 checkPlayerLives(player);
                 waveCounter += 1;
             }
@@ -100,22 +102,25 @@ public class Game extends GraphicsProgram implements TDConstants {
             processClicks(sideMenuShop, turrets, player);
 
 
+//            if(1000.0/(System.currentTimeMillis() - lastRender)>1000.0/TARGET_FPS){
+//                canvas.repaint();
+//                lastRender = System.currentTimeMillis();
+//            }
             canvas.repaint();
 
 
             // Measuring time for compensating computation losses. //TODO move to function
-            timeElapsed = System.nanoTime() - start;
-            long nsDif = timeElapsed;
-            if ((long) player.getTick() * 1000000 - nsDif < 0) nsDif = player.getTick() * 1000000;
-
+            timeElapsed = System.currentTimeMillis() - start;
+            long msDif = timeElapsed;
+            if ((long) player.getTick() - msDif < 0) msDif = player.getTick();
             try {
-                sleep((int)(player.getTick() * 1000000 - nsDif)/1000000);
+                sleep((int)(player.getTick() - msDif));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            cycleLength = System.nanoTime() - start;
-            lastFps.add((int) (1000000000/cycleLength));
+            cycleLength = System.currentTimeMillis() - start;
+            lastFps.add((int) (1000/cycleLength));
             if(lastFps.size() > AVERAGE_FPS){
                 lastFps.remove(0);
             }
@@ -125,17 +130,17 @@ public class Game extends GraphicsProgram implements TDConstants {
     /**
      * method to move enemies
      */
-    private void moveEnemies(ArrayList<Enemy> enemies, Player player) {
+    private void moveEnemies(ArrayList<Enemy> enemies, Player player, double elapsedTime) {
         for(int i = enemies.size() -1; i >= 0; i--){
             Enemy enemy = enemies.get(i);
-            enemy.move(enemies, player);
+            enemy.move(enemies, player, elapsedTime);
         }
     }
 
     /**
      * method to move bullets
      */
-    private void moveBullets(ArrayList<Bullet> bullets) {
+    private void moveBullets(ArrayList<Bullet> bullets, double elapsedTime) {
         for(int i = bullets.size()-1; i>=0; i--) {
             Bullet bullet = bullets.get(i);
             if(bullet.getEnemy()==null) {
@@ -149,7 +154,7 @@ public class Game extends GraphicsProgram implements TDConstants {
                 bullets.remove(i);
             }
             else{
-                bullet.move();
+                bullet.move(elapsedTime);
             }
         }
     }
@@ -261,10 +266,10 @@ public class Game extends GraphicsProgram implements TDConstants {
     /**
      * method to shoot from turrets, when they are reloaded
      */
-    private void shoot(ArrayList<Turret> turrets, ArrayList<Bullet> bullets, ArrayList<Particle> particles) {
+    private void shoot(ArrayList<Turret> turrets, ArrayList<Bullet> bullets, ArrayList<Particle> particles, double elapsedTime) {
         for (Turret turret : turrets) {
             if (turret.getCurrentLoad() < turret.getReloadTime()) {
-                turret.addReload();
+                turret.addReload(elapsedTime);
             } else if (turret.getTarget() != null) {
                 Pair<Double, Double> canonEnd = turret.getCanonEnd();
                 bullets.add(new Bullet(turret.getTarget(), turret, canonEnd.getKey(), canonEnd.getValue()));
@@ -315,10 +320,10 @@ public class Game extends GraphicsProgram implements TDConstants {
     /**
      * method to heal enemies with healing abilities
      */
-    private void healEnemies(ArrayList<Enemy> enemies) {
+    private void healEnemies(ArrayList<Enemy> enemies, double cycleLength) {
         for(Enemy enemy: enemies){
             if(enemy.getHealing() > 0 && enemy.getHealth() < enemy.getMaxHealth()){
-                enemy.heal(enemy.getHealing());
+                enemy.heal(enemy.getHealing() * cycleLength);
             }
         }
     }
@@ -423,7 +428,7 @@ public class Game extends GraphicsProgram implements TDConstants {
                     label1.setLabel(turret.getCost() + "$  " + (int)turret.getDmg() + "DMG");
                     label1.setLocation(label1.getX(), turret.getBase().getY() -20);
                     GLabel label2 = menu.getShopInfoLabels().get(1);
-                    label2.setLabel(TICK / 1000.0 * turret.getReloadTime() + "s  " + (int)turret.getRange() + "m " + (int)turret.getBulletSpeed() + "m/s");
+                    label2.setLabel(turret.getReloadTime() / 1000 + "s  " + (int)turret.getRange() + "m " + (int)(turret.getBulletSpeed()*1000) + "m/s");
                     label2.setLocation(label2.getX(), turret.getBase().getY() +10);
                     GLabel label3 = menu.getShopInfoLabels().get(2);
                     label3.setLabel("anti " + turret.getTargetType());
@@ -577,7 +582,7 @@ public class Game extends GraphicsProgram implements TDConstants {
      * method to add enemies from a wave to the screen
      * when wave is bigger than 10, there is a random chance, that enemy will mutate.
      */
-    private void addEnemies(ArrayList<Enemy> enemies, ArrayList<ArrayList<String>> waves, int counter, ArrayList<Double> pathX, ArrayList<Double> pathY, Player player) {
+    private void addEnemies(ArrayList<Enemy> enemies, ArrayList<ArrayList<String>> waves, int counter, ArrayList<Double> pathX, ArrayList<Double> pathY, Player player, double cycleLength) {
         if(counter%WAVE_SPACING==0 && waves.size()>0 && player.getStarted()) {
             ArrayList<String> wave = waves.get(0);
             enemies.add(Enemy.createEnemy(wave.get(0), pathX, pathY, player.getWaveNumber()));
