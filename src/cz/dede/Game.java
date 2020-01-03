@@ -53,21 +53,22 @@ public class Game extends GraphicsProgram implements TDConstants {
         GOval rangeIndicator = createIndicator();
         SideMenuShop sideMenuShop = new SideMenuShop();
         GLabel score = createLabel(5, 20, "20");
-        ArrayList<Integer> lastFps = new ArrayList<>();
-        lastFps.add(1);
+        ArrayList<Integer> lastTps = new ArrayList<>();
+        lastTps.add(1);
 
         addMouseListeners();
         colorShop(sideMenuShop, player);
 
         ArrayList<ArrayList<String>> waves = new ArrayList<ArrayList<String>>();
         waves = setWaves(waves);
-        int waveCounter = 0;
+        double waveCounter = 0;
 
-        long start = 0;
-        long timeElapsed = 1;
+        long start;
+        long timeElapsed;
         long cycleLength = 1;
 
         long lastRender = System.currentTimeMillis();
+        double repaintAfter = 1000.0 / TARGET_FPS;
 
         //MAIN LOOP
         while(true) {
@@ -78,35 +79,35 @@ public class Game extends GraphicsProgram implements TDConstants {
                 return;
             }
 
+            double timeDifferenceScaled = cycleLength * player.getSpeedBoost();
+
             if(!player.isPause()){
-                moveEnemies(enemies, player, cycleLength);
-                moveBullets(bullets, cycleLength);
+                moveEnemies(enemies, player, timeDifferenceScaled);
+                moveBullets(bullets, timeDifferenceScaled);
                 rotateCanons(turrets, enemies);
                 checkCollisions(bullets);
-                shoot(turrets, bullets, particles, cycleLength);
+                shoot(turrets, bullets, particles, timeDifferenceScaled);
+                updateParticles(particles, timeDifferenceScaled);
                 checkHealth(enemies, player, sideMenuShop);
-                healEnemies(enemies, cycleLength);
+                healEnemies(enemies, timeDifferenceScaled);
                 moveHealthBars(enemies);
-                addEnemies(enemies, waves, waveCounter, pathX, pathY, player, cycleLength); //TODO it should be based on time not on frames
+                waveCounter = addEnemies(enemies, waves, waveCounter, pathX, pathY, player, timeDifferenceScaled);
                 checkPlayerLives(player);
-                waveCounter += 1;
             }
 
             moveRangeIndicator(rangeIndicator, turrets, sideMenuShop);
             showShopInfo(sideMenuShop);
-            changeScoreLabel(player, score, lastFps);
             moveOnClick();
             placeTurret(turrets, player, sideMenuShop);
-            updateParticles(particles);
             hideWaveButton(sideMenuShop, enemies, player);
             processClicks(sideMenuShop, turrets, player);
 
 
-//            if(1000.0/(System.currentTimeMillis() - lastRender)>1000.0/TARGET_FPS){
-//                canvas.repaint();
-//                lastRender = System.currentTimeMillis();
-//            }
-            canvas.repaint();
+            if(System.currentTimeMillis() - lastRender > repaintAfter){
+                changeScoreLabel(player, score, lastTps, (int) (1000 / (System.currentTimeMillis() - lastRender)));
+                canvas.repaint();
+                lastRender = System.currentTimeMillis();
+            }
 
 
             // Measuring time for compensating computation losses. //TODO move to function
@@ -120,9 +121,9 @@ public class Game extends GraphicsProgram implements TDConstants {
             }
 
             cycleLength = System.currentTimeMillis() - start;
-            lastFps.add((int) (1000/cycleLength));
-            if(lastFps.size() > AVERAGE_FPS){
-                lastFps.remove(0);
+            lastTps.add((int) (1000/cycleLength));
+            if(lastTps.size() > AVERAGE_TPS_FROM){
+                lastTps.remove(0);
             }
         }
     }
@@ -163,10 +164,10 @@ public class Game extends GraphicsProgram implements TDConstants {
      * method to update particles (calls update method on all of them
      * @param particles
      */
-    private void updateParticles(ArrayList<Particle> particles){
+    private void updateParticles(ArrayList<Particle> particles, double elapsedTime){
         for(int i = particles.size() -1 ; i >= 0; i--){
             Particle particle = particles.get(i);
-            particle.update();
+            particle.update(elapsedTime);
             if (particle.getRemainingTime() < 0){
                 particle.delete();
                 particles.remove(particle);
@@ -274,7 +275,7 @@ public class Game extends GraphicsProgram implements TDConstants {
                 Pair<Double, Double> canonEnd = turret.getCanonEnd();
                 bullets.add(new Bullet(turret.getTarget(), turret, canonEnd.getKey(), canonEnd.getValue()));
                 createParticles(particles, new Color(0xFED766), 5, canonEnd.getKey(), canonEnd.getValue(),
-                        getAngle(canonEnd.getKey(), canonEnd.getValue(), turret.getTarget().getX(), turret.getTarget().getY()), 3, 20); // TODO each turret should have particle settings
+                        getAngle(canonEnd.getKey(), canonEnd.getValue(), turret.getTarget().getX(), turret.getTarget().getY()), 0.36, 150); // TODO each turret should have particle settings
                 turret.setCurrentLoad(0);
                 turret.getCanon().sendToFront();
 //				ShootClip.play(); // TODO just for fun, but its buggy
@@ -463,11 +464,11 @@ public class Game extends GraphicsProgram implements TDConstants {
     /**
      * method to change label with player score and lives
      */
-    private void changeScoreLabel(Player player, GLabel label, ArrayList<Integer> lastFps) {
-        int sumOfAll = lastFps.stream().mapToInt(value -> value).sum();
-        int averageFps = sumOfAll / lastFps.size();
+    private void changeScoreLabel(Player player, GLabel label, ArrayList<Integer> lastTps, int fps) {
+        int sumOfAll = lastTps.stream().mapToInt(value -> value).sum();
+        int averageTps = sumOfAll / lastTps.size();
         label.setLabel("Money: " + (int) player.getMoney() + "$   Health: " + player.getLives() + "   Wave: " + (player.getWaveNumber() +1) +
-                "   Score: " + player.getKilledEnemies() + "  FPS: " + averageFps);
+                "   Score: " + player.getKilledEnemies() + "  TPS: " + averageTps + "  FPS: " + fps);
         if(sideMenuTurretDetail != null){
             sideMenuTurretDetail.update(player);
         }
@@ -582,8 +583,9 @@ public class Game extends GraphicsProgram implements TDConstants {
      * method to add enemies from a wave to the screen
      * when wave is bigger than 10, there is a random chance, that enemy will mutate.
      */
-    private void addEnemies(ArrayList<Enemy> enemies, ArrayList<ArrayList<String>> waves, int counter, ArrayList<Double> pathX, ArrayList<Double> pathY, Player player, double cycleLength) {
-        if(counter%WAVE_SPACING==0 && waves.size()>0 && player.getStarted()) {
+    private double addEnemies(ArrayList<Enemy> enemies, ArrayList<ArrayList<String>> waves, double counter, ArrayList<Double> pathX, ArrayList<Double> pathY, Player player, double cycleLength) {
+        counter += cycleLength;
+        if(counter > WAVE_SPACING && waves.size()>0 && player.getStarted()) { // TODO maybe each enemy should have own spacing
             ArrayList<String> wave = waves.get(0);
             enemies.add(Enemy.createEnemy(wave.get(0), pathX, pathY, player.getWaveNumber()));
             double randomBoost = rg.nextDouble(0, WAVE_RANDOM_MUTATION);
@@ -602,7 +604,9 @@ public class Game extends GraphicsProgram implements TDConstants {
                 waves.remove(0);
                 player.setWaveNumber(player.getWaveNumber() + 1);
             }
+            counter = 0;
         }
+        return counter;
     }
 
     /**
@@ -647,7 +651,7 @@ public class Game extends GraphicsProgram implements TDConstants {
         else if(enemies.size() == 0 && !menu.getNextWaveButton().getBackground().isVisible() && !player.getStarted()) {
             menu.getNextWaveButton().getBackground().setVisible(true);
             menu.getNextWaveButton().getText().setVisible(true);
-            player.setTick(TICK);
+            player.setSpeedBoost(1);
         }
         if(enemies.size() > 0 && !menu.getFasterWaveButton().isVisible()) { // TODO it should be controlled by start wave or killed last enemy of wave not by number of enemies
             menu.getFasterWaveButton().setVisible(true);

@@ -16,10 +16,9 @@ public interface TDConstants {
     int BOARD_WIDTH = APPLICATION_WIDTH;
     int BOARD_HEIGHT = APPLICATION_HEIGHT;
 
-    int TICK = 8;
-    int FAST_TICK = 2;
-    int AVERAGE_FPS = 40; // how many cycles are averaged into fps number
-    int TARGET_FPS = 60;
+    int TICK = 1; // TODO remove this
+    int AVERAGE_TPS_FROM = 40; // how many cycles are averaged into tps number
+    int TARGET_FPS = 120;
 
     //--------------------------------TURRETS-------------------------------------------
 
@@ -174,7 +173,7 @@ public interface TDConstants {
     int INFO_BOX_WIDTH = 240;
     int INFO_BOX_HEIGHT = 100;
     double[] INFO_BOX_Y = {0, 10, 50, 50, -50, -50, -10, 0};
-    double[] INFO_BOX_X = {0, -20, -20, -160, -160, -20, -20, 0};
+    double[] INFO_BOX_X = {0, -20, -20, -180, -180, -20, -20, 0};
 
     double[] PAUSE_X = {0, 0, 18, 18, 0};
     double[] PAUSE_Y = {0, 40, 40, 0, 0};
@@ -182,7 +181,7 @@ public interface TDConstants {
     /**
      * Constants of waves
      */
-    int WAVE_SPACING = 150; //150
+    int WAVE_SPACING = 1250; //ms
     double WAVE_HEALTH_CONSTANT = 0.05; //constant tells how much to increase enemy health each wave
     int WAVE_RANDOM_MUTATION = 10;
     int WAVE_RANDOM_MUTATION_FIRST_WAVE = 6;
