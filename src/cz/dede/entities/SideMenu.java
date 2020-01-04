@@ -7,7 +7,7 @@ import cz.dede.resources.TDConstants;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static cz.dede.Game.canvas;
+import static cz.dede.Main.canvas;
 
 public abstract class SideMenu implements TDConstants {
 
@@ -48,7 +48,7 @@ public abstract class SideMenu implements TDConstants {
      */
     private void addAuthor() {
         this.author = createLabel(canvas.getWidth()-SIDE_MENU_WIDTH/2.0, canvas.getHeight()-10, "17");
-        this.author.setLabel("© 2019 dede64");
+        this.author.setLabel("© 2020 dede64");
         this.author.move(-this.author.getWidth()/2, 0);
         this.author.setColor(Color.BLACK);
     }

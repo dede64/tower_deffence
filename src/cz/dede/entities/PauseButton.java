@@ -4,7 +4,7 @@ import acm.graphics.GPolygon;
 
 import java.awt.*;
 
-import static cz.dede.Game.canvas;
+import static cz.dede.Main.canvas;
 import static cz.dede.resources.TDConstants.*;
 
 public class PauseButton extends Button {

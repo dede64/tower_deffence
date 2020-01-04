@@ -6,7 +6,7 @@ import cz.dede.entities.Enemy;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static cz.dede.Game.canvas;
+import static cz.dede.Main.canvas;
 
 public class Flyer extends Enemy {
     public Flyer(String type, ArrayList<Double> pathX, ArrayList<Double> pathY, int waveNumber) {

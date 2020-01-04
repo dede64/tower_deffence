@@ -7,7 +7,7 @@ import cz.dede.resources.TDConstants;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static cz.dede.Game.canvas;
+import static cz.dede.Main.canvas;
 
 /**
  * Class of Player object
@@ -24,6 +24,7 @@ public class Player implements TDConstants {
     private double moneyBonus= 1;
     private boolean pause = false;
     private boolean restartGame = false;
+    private double speedBoost = 1;
 
     private GRect gameOverBackground;
     private GLabel gameOverLabel;
@@ -198,5 +199,20 @@ public class Player implements TDConstants {
 
     public boolean isRestartGame() {
         return restartGame;
+    }
+
+    public double getSpeedBoost() {
+        return speedBoost;
+    }
+
+    public void setSpeedBoost(double speedBoost) {
+        this.speedBoost = speedBoost;
+    }
+
+    public void speedButtonClicked(){
+        this.speedBoost += 1;
+        if(this.speedBoost == 5){
+            this.speedBoost = 1;
+        }
     }
 }

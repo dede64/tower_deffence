@@ -4,7 +4,7 @@ import acm.graphics.GOval;
 
 import java.awt.*;
 
-import static cz.dede.Game.canvas;
+import static cz.dede.Main.canvas;
 
 public class Particle {
 
@@ -31,14 +31,14 @@ public class Particle {
         this.color = color;
     }
 
-    public void update(){
+    public void update(double elapsedTime){
         particle.setLocation(x + xVelocity, y + yVelocity);
-        x += xVelocity;
-        y += yVelocity;
+        x += xVelocity * elapsedTime;
+        y += yVelocity * elapsedTime;
         Color newColor = new Color(color.getRed(),color.getGreen(), color.getBlue(), (int) (255* this.remainingTime/this.totalTime));
         particle.setFillColor(newColor);
         particle.setColor(newColor);
-        remainingTime -= 1;
+        remainingTime -= elapsedTime;
 
     }
 

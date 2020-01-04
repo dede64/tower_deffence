@@ -8,7 +8,7 @@ import cz.dede.resources.TDConstants;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static cz.dede.Game.canvas;
+import static cz.dede.Main.canvas;
 
 /**
  * Class of the side menu
@@ -44,15 +44,11 @@ public class SideMenuShop extends SideMenu implements TDConstants {
 
         this.fasterWaveButton = new Button("Faster", canvas.getWidth()-SIDE_MENU_WIDTH+5, canvas.getHeight()-60, SIDE_MENU_WIDTH - 10, 30, Color.CYAN);
         this.fasterWaveButton.setVisible(false);
-        this.fasterWaveButton.setButtonEventListener((Player player)->{
-            player.setTick(FAST_TICK);
-        });
+        this.fasterWaveButton.setButtonEventListener(Player::speedButtonClicked);
 
         this.pauseButton = new PauseButton("", canvas.getWidth() - SIDE_MENU_WIDTH + 70, canvas.getHeight() - 235, SIDE_MENU_WIDTH - 140, 60, new Color(0x2252AA));
-        this.pauseButton.setButtonEventListener((Player player)->{
-            player.changePause(); // TODO somehow change icon on pause button.
-
-        });
+        // TODO somehow change icon on pause button.
+        this.pauseButton.setButtonEventListener(Player::changePause);
 
         this.getButtons().add(this.nextWaveButton);
         this.getButtons().add(this.fasterWaveButton);
@@ -101,13 +97,13 @@ public class SideMenuShop extends SideMenu implements TDConstants {
         canvas.add(this.shopInfoBox, canvas.getWidth()-SIDE_MENU_WIDTH + 50, canvas.getHeight()-60);
         this.shopInfoBox.setVisible(false);
 
-        GLabel info1 = createLabel(canvas.getWidth()-SIDE_MENU_WIDTH - 105, -50, "16");
+        GLabel info1 = createLabel(canvas.getWidth()-SIDE_MENU_WIDTH - 125, -50, "16");
         info1.setColor(Color.BLACK);
         this.shopInfoLabels.add(info1);
-        GLabel info2 = createLabel(canvas.getWidth()-SIDE_MENU_WIDTH - 105, -50, "16");
+        GLabel info2 = createLabel(canvas.getWidth()-SIDE_MENU_WIDTH - 125, -50, "16");
         info2.setColor(Color.BLACK);
         this.shopInfoLabels.add(info2);
-        GLabel info3 = createLabel(canvas.getWidth()-SIDE_MENU_WIDTH - 105, -50, "16");
+        GLabel info3 = createLabel(canvas.getWidth()-SIDE_MENU_WIDTH - 125, -50, "16");
         info3.setColor(Color.BLACK);
         this.shopInfoLabels.add(info3);
         for (GLabel shopInfoLabel : this.shopInfoLabels) {

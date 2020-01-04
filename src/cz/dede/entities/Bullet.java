@@ -4,7 +4,7 @@ import acm.graphics.GPolygon;
 import cz.dede.Game;
 import cz.dede.resources.TDConstants;
 
-import static cz.dede.Game.canvas;
+import static cz.dede.Main.canvas;
 
 /**
  * Class of Bullet object
@@ -48,11 +48,11 @@ public class Bullet implements TDConstants {
      * method to move the bullet - it checks in which angle the enemy is and then creates the speed (x, y)which equeals the total speed of bullet.
      * than it rotates the bullet in the direction of movement
      */
-    public void move() {
+    public void move(double elapsedTime) {
         double x_diff = this.enemy.getX() - this.x;
         double y_diff = this.enemy.getY() - this.y;
         double distance = Math.sqrt(Math.pow(x_diff, 2) + Math.pow(y_diff, 2));
-        double ratio = distance/this.speed;
+        double ratio = distance/this.speed/elapsedTime;
         double x_speed = x_diff/ratio;
         double y_speed = y_diff/ratio;
         this.x += x_speed;
